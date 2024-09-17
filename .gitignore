@@ -1,0 +1,17 @@
+/node_modules
+/laradock
+/public/hot
+/public/storage
+/public/news/news_project_upload.zip
+/storage/*.key
+/vendor
+/laradock
+/.idea
+/.vscode
+/.vagrant
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.env
+.phpunit.result.cache
