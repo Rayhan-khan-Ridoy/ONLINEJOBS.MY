@@ -13,7 +13,7 @@
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
         "intervention/image": "^2.4",
-        "laravel/framework": "7.0.*",
+        "laravel/framework": "^7.30",
         "laravel/helpers": "^1.5",
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.0",
