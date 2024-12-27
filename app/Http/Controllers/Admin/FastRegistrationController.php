@@ -30,39 +30,40 @@ class FastRegistrationController extends Controller
     public function getFastRegistrationData()
     {
         if(auth()->user()->hasRole('superadministrator|administrator')){
-            $users = FastRegistratin::with('state','city','job_seeker_job_category_data')->orderBy('id','desc')->get();
+            $users = FastRegistratin::with('state', 'city', 'job_seeker_job_category_data')
+                ->orderBy('id', 'desc')
+                ->get();
+        
             return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                $string = '<a href="'.route('admin.fast.registration.detail', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
-                $string .= '<a href="'.route('admin.fast.registration.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
-                $string .= '<a class="btn btn-xs btn-danger" onclick="return confirm('."'Are you sure?'".')" href="'.route('admin.fast.registration.delete', $user->id).'">Delete</a>';
-                
-                return $string;
-            })
-            ->addColumn('full_name', function($user) {
-                return $user->full_name ?? '';
-            })
-            ->addColumn('job_category', function($user) {
-                return $user->job_seeker_job_category_data->name ?? '';
-            })
-            ->addColumn('number', function($user) {
-                return $user->number ?? '';
-            })
-            ->addColumn('state_name', function($user) {
-                return $user->state->name;
-            })
-            ->addColumn('city_name', function($user) {
-                return $user->city->name;
-            })
-            ->addColumn('created_at', function($user) {
-                $date=$user->created_at->format('Y-m-d');
-                return $date;
-            })
-            ->rawColumns(['action'])
-            // ->rawColumns(['profile_image', 'action'])
-            // ->removeColumn('password')
-            ->make(true);
+                ->addColumn('action', function ($user) {
+                    $string = '<a href="'.route('admin.fast.registration.detail', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
+                    $string .= '<a href="'.route('admin.fast.registration.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
+                    $string .= '<a class="btn btn-xs btn-danger" onclick="return confirm('."'Are you sure?'".')" href="'.route('admin.fast.registration.delete', $user->id).'">Delete</a>';
+                    
+                    return $string;
+                })
+                ->addColumn('full_name', function($user) {
+                    return $user->full_name ?? 'N/A';
+                })
+                ->addColumn('job_category', function($user) {
+                    return $user->job_seeker_job_category_data->name ?? 'N/A';
+                })
+                ->addColumn('number', function($user) {
+                    return $user->number ?? 'N/A';
+                })
+                ->addColumn('state_name', function($user) {
+                    return $user->state->name ?? 'N/A';
+                })
+                ->addColumn('city_name', function($user) {
+                    return $user->city->name ?? 'N/A';
+                })
+                ->addColumn('created_at', function($user) {
+                    return $user->created_at ? $user->created_at->format('Y-m-d') : 'N/A';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
+        
     }
 
     public function create()

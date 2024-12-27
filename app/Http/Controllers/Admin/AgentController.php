@@ -56,91 +56,123 @@ class AgentController extends Controller
 
     public function getAgentsData()
     {
-        if(auth()->user()->hasRole('superadministrator|administrator')){
-            $users = User::with('agent_profile')->whereHas('roles', function($q){$q->whereIn('name', ['part-timer','agent']);})->where('status', 1)->get();
-            // $users = User::with('agent_profile')->whereRoleIs('agent')->orwhereRoleIs('part-timer')->where('status', 1)->get();
-            return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                //return '<a href="'.route('admin.agent.edit', $user->id).'" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
-                $string = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
-                $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
-                if(auth()->user()->hasRole('superadministrator')){
-                    
-                    $string .= '<a class="ml-1 btn btn-danger" href="'.route('admin.agent.block', $user->id).'" onclick="return confirm(\'Are you sure?\')">Block</a>';         //block button added by milesh 3/11/2020
-                    
-                    // $string .= '<a class="btn btn-xs btn-danger" onclick="return confirm('."'Are you sure?'".')" href="'.route('admin.agent.delete', $user->id).'">Delete</a>';
-                }
-                return $string;
-            })
-            ->addColumn('country', function($user) {
-                return $user->agent_profile['country_data']['name'];
-            })
-            ->addColumn('agency_registered_name', function($user) {
-                return $user->agent_profile['agency_registered_name'];
-            })
-            ->addColumn('agency_email', function($user) {
-                return $user->agent_profile['agency_email'];
-            })
-            ->addColumn('agency_city', function($user) {
-                return $user->agent_profile['company_city_data']['name'];
-            })
-            ->addColumn('first_name', function($user) {
-                return $user->agent_profile['first_name'];
-            })
-            ->addColumn('phone', function($user) {
-                return $user->agent_profile['contact_phone'];
-            })
-            ->editColumn('id', 'ID: {{$id}}')
-            ->removeColumn('password')
-            ->make(true);
-        }
-        if(auth()->user()->hasRole('cadmin')){
-            $user_country=UserProfile::where('user_id',auth()->user()->id)->pluck('company_country');
-            $users = DB::table('agent_profiles')
-                    ->leftjoin('countries','countries.id','=','agent_profiles.agency_country')
-                    ->leftjoin('cities','cities.id','=','agent_profiles.agency_city')
-                    ->leftjoin('users','users.id','=','agent_profiles.user_id')
-                    ->leftjoin('user_profiles','user_profiles.user_id','=','users.id')
-                    ->select('agent_profiles.agency_registered_name','cities.name as agency_city','countries.name as company_country','users.public_id','users.id','users.code','users.email','users.created_at','users.name','agent_profiles.contact_phone')
-                    ->where('users.status','=',1)
-                    ->where('agent_profiles.agency_country','=',$user_country)
+        if (auth()->user()->hasRole('superadministrator|administrator')) 
+        {
+            try {
+                $users = User::with('agent_profile')
+                    ->whereHas('roles', function ($q) {
+                        $q->whereIn('name', ['part-timer', 'agent']);
+                    })
+                    ->where('status', 1)
                     ->get();
+        
                 return DataTables::of($users)
-                ->addColumn('action', function ($user) {
-                    //return '<a href="'.route('admin.agent.edit', $user->id).'" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
-                    $string = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
-                    if(auth()->user()->hasRole('superadministrator|administrator')){
-                        $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
-                        $string .= '<a class="ml-1 btn btn-danger" href="'.route('admin.agent.block', $user->id).'" onclick="return confirm(\'Are you sure?\')">Block</a>';         //block button added by milesh 3/11/2020
-                        
-                        // $string .= '<a class="btn btn-xs btn-danger" onclick="return confirm('."'Are you sure?'".')" href="'.route('admin.agent.delete', $user->id).'">Delete</a>';
+                    ->addColumn('action', function ($user) {
+                        $string = '<a href="' . route('admin.agent.show', $user->id) . '" class="btn btn-xs btn-primary">View</a> ';
+                        $string .= '<a href="' . route('agent.edit', $user->id) . '" class="btn btn-xs btn-info">Edit</a> ';
+                        if (auth()->user()->hasRole('superadministrator')) {
+                            $string .= '<a class="ml-1 btn btn-danger" href="' . route('admin.agent.block', $user->id) . '" onclick="return confirm(\'Are you sure?\')">Block</a>';
+                        }
+                        return $string;
+                    })
+                    ->addColumn('country', function ($user) {
+                        return $user->agent_profile['country_data']['name'] ?? 'N/A';
+                    })
+                    ->addColumn('agency_registered_name', function ($user) {
+                        return $user->agent_profile['agency_registered_name'] ?? 'N/A';
+                    })
+                    ->addColumn('agency_email', function ($user) {
+                        return $user->agent_profile['agency_email'] ?? 'N/A';
+                    })
+                    ->addColumn('agency_city', function ($user) {
+                        return $user->agent_profile['company_city_data']['name'] ?? 'N/A';
+                    })
+                    ->addColumn('first_name', function ($user) {
+                        return $user->agent_profile['first_name'] ?? 'N/A';
+                    })
+                    ->addColumn('phone', function ($user) {
+                        return $user->agent_profile['contact_phone'] ?? 'N/A';
+                    })
+                    ->editColumn('id', 'ID: {{$id}}')
+                    ->removeColumn('password')
+                    ->make(true);
+            } catch (\Exception $e) {
+                \Log::error('DataTables Error: ' . $e->getMessage());
+                if (config('app.debug')) {
+                    return response()->json(['error' => $e->getMessage()], 500);
+                }
+                return response()->json(['error' => 'Server error occurred.'], 500);
+            }
+        }
+        
+        if (auth()->user()->hasRole('cadmin')) 
+            {
+                try {
+                // Get the user's company country
+                $user_country = UserProfile::where('user_id', auth()->user()->id)->pluck('company_country')->first();
+        
+                // Fetch users with related data
+                $users = DB::table('agent_profiles')
+                    ->leftJoin('countries', 'countries.id', '=', 'agent_profiles.agency_country')
+                    ->leftJoin('cities', 'cities.id', '=', 'agent_profiles.agency_city')
+                    ->leftJoin('users', 'users.id', '=', 'agent_profiles.user_id')
+                    ->leftJoin('user_profiles', 'user_profiles.user_id', '=', 'users.id')
+                    ->select(
+                        'agent_profiles.agency_registered_name',
+                        'cities.name as agency_city',
+                        'countries.name as company_country',
+                        'users.public_id',
+                        'users.id',
+                        'users.code',
+                        'users.email',
+                        'users.created_at',
+                        'users.name',
+                        'agent_profiles.contact_phone'
+                    )
+                    ->where('users.status', '=', 1)
+                    ->where('agent_profiles.agency_country', '=', $user_country)
+                    ->get();
+        
+                    return DataTables::of($users)
+                    ->addColumn('action', function ($user) {
+                        $string = '<a href="' . route('admin.agent.show', $user->id) . '" class="btn btn-xs btn-primary">View</a> ';
+                        if (auth()->user()->hasRole('superadministrator|administrator')) {
+                            $string .= '<a href="' . route('agent.edit', $user->id) . '" class="btn btn-xs btn-info">Edit</a> ';
+                            $string .= '<a class="ml-1 btn btn-danger" href="' . route('admin.agent.block', $user->id) . '" onclick="return confirm(\'Are you sure?\')">Block</a>';
+                        }
+                        return $string;
+                    })
+                    ->addColumn('country', function ($user) {
+                        return $user->company_country ?? 'N/A';
+                    })
+                    ->addColumn('agency_registered_name', function ($user) {
+                        return $user->agency_registered_name ?? 'N/A';
+                    })
+                    ->addColumn('agency_email', function ($user) {
+                        return $user->email ?? 'N/A';
+                    })
+                    ->addColumn('agency_city', function ($user) {
+                        return $user->agency_city ?? 'N/A';
+                    })
+                    ->addColumn('first_name', function ($user) {
+                        return $user->name ?? 'N/A';
+                    })
+                    ->addColumn('phone', function ($user) {
+                        return $user->contact_phone ?? 'N/A';
+                    })
+                    ->editColumn('id', 'ID: {{$id}}')
+                    ->removeColumn('password')
+                    ->make(true);
+                } catch (\Exception $e) {
+                    \Log::error('DataTables Error: ' . $e->getMessage());
+                    if (config('app.debug')) {
+                        return response()->json(['error' => $e->getMessage()], 500);
                     }
-                    return $string;
-                })
-                ->addColumn('country', function($user) {
-                    return $user->company_country;
-                })
-                ->addColumn('agency_registered_name', function($user) {
-                    return $user->agency_registered_name;
-                })
-                ->addColumn('agency_email', function($user) {
-                    return $user->email ?? '';
-                })
-                ->addColumn('agency_city', function($user) {
-                    return $user->agency_city;
-                })
-                ->addColumn('first_name', function($user) {
-                    return $user->name ?? '';
-                })
-                ->addColumn('phone', function($user) {
-                    return $user->contact_phone ?? '';
-                })
-                ->editColumn('id', 'ID: {{$id}}')
-                ->removeColumn('password')
-                ->make(true);
+                    return response()->json(['error' => 'Server error occurred.'], 500);
+                }
         }
     }
-
+        
     // New controller added for agent blocked --3/11/2020
     public function agentBlocked()
     {
@@ -150,51 +182,67 @@ class AgentController extends Controller
     public function geBlockedtAgentsData()
     {
         if(auth()->user()->hasRole('superadministrator|administrator')){
-            $users = User::with('agent_profile')->whereHas('roles', function($q){$q->whereIn('name', ['part-timer','agent']);})->where('status', 2)->get();
-
+            $users = User::with('agent_profile')->whereHas('roles', function($q) {
+                $q->whereIn('name', ['part-timer', 'agent']);
+            })->where('status', 2)->get();
+        
             return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                $string = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
-                if(auth()->user()->hasRole('superadministrator')){
-                    $string .= '<a class="ml-1 btn btn-danger" href="'.route('admin.agent.unblock', $user->id).'" onclick="return confirm(\'Are you sure?\')">UnBlock</a>';
-                    $string .= '<a class="btn btn-xs btn-info" onclick="return confirm('."'Are you sure?'".')" href="'.route('admin.agent.delete', $user->id).'">Delete</a>';
-                }
-                return $string;
-            })
-            ->addColumn('country', function($user) {
-                return $user->agent_profile['country_data']['name'];
-            })
-            ->addColumn('agency_registered_name', function($user) {
-                return $user->agent_profile['agency_registered_name'];
-            })
-            ->addColumn('agency_email', function($user) {
-                return $user->agent_profile['agency_email'];
-            })
-            ->addColumn('agency_city', function($user) {
-                return $user->agent_profile['company_city_data']['name'];
-            })
-            ->addColumn('first_name', function($user) {
-                return $user->agent_profile['first_name'];
-            })
-            ->addColumn('phone', function($user) {
-                return $user->agent_profile['contact_phone'];
-            })
-            ->editColumn('id', 'ID: {{$id}}')
-            ->removeColumn('password')
-            ->make(true);
+                ->addColumn('action', function ($user) {
+                    $string = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
+                    if(auth()->user()->hasRole('superadministrator')){
+                        $string .= '<a class="ml-1 btn btn-danger" href="'.route('admin.agent.unblock', $user->id).'" onclick="return confirm(\'Are you sure?\')">UnBlock</a>';
+                        $string .= '<a class="btn btn-xs btn-info" onclick="return confirm('."'Are you sure?'".')" href="'.route('admin.agent.delete', $user->id).'">Delete</a>';
+                    }
+                    return $string;
+                })
+                ->addColumn('country', function($user) {
+                    return $user->agent_profile['country_data']['name'] ?? 'N/A';
+                })
+                ->addColumn('agency_registered_name', function($user) {
+                    return $user->agent_profile['agency_registered_name'] ?? 'N/A';
+                })
+                ->addColumn('agency_email', function($user) {
+                    return $user->agent_profile['agency_email'] ?? 'N/A';
+                })
+                ->addColumn('agency_city', function($user) {
+                    return $user->agent_profile['company_city_data']['name'] ?? 'N/A';
+                })
+                ->addColumn('first_name', function($user) {
+                    return $user->agent_profile['first_name'] ?? 'N/A';
+                })
+                ->addColumn('phone', function($user) {
+                    return $user->agent_profile['contact_phone'] ?? 'N/A';
+                })
+                ->editColumn('id', 'ID: {{$id}}')
+                ->removeColumn('password')
+                ->make(true);
         }
+        
         if(auth()->user()->hasRole('cadmin')){
-            $user_country=UserProfile::where('user_id',auth()->user()->id)->pluck('company_country');
+            $user_country = UserProfile::where('user_id', auth()->user()->id)->pluck('company_country')->first(); // .first() to get a single value
+        
             $users = DB::table('agent_profiles')
-                    ->leftjoin('countries','countries.id','=','agent_profiles.agency_country')
-                    ->leftjoin('cities','cities.id','=','agent_profiles.agency_city')
-                    ->leftjoin('users','users.id','=','agent_profiles.user_id')
-                    ->leftjoin('user_profiles','user_profiles.user_id','=','users.id')
-                    ->select('agent_profiles.agency_registered_name','cities.name as agency_city','countries.name as company_country','users.public_id','users.id','users.code','users.email','users.created_at','users.name','agent_profiles.contact_phone')
-                    ->where('users.status','=',2)
-                    ->where('agent_profiles.agency_country','=',$user_country)
-                    ->get();
-                return DataTables::of($users)
+                ->leftjoin('countries', 'countries.id', '=', 'agent_profiles.agency_country')
+                ->leftjoin('cities', 'cities.id', '=', 'agent_profiles.agency_city')
+                ->leftjoin('users', 'users.id', '=', 'agent_profiles.user_id')
+                ->leftjoin('user_profiles', 'user_profiles.user_id', '=', 'users.id')
+                ->select(
+                    'agent_profiles.agency_registered_name',
+                    'cities.name as agency_city',
+                    'countries.name as company_country',
+                    'users.public_id',
+                    'users.id',
+                    'users.code',
+                    'users.email',
+                    'users.created_at',
+                    'users.name',
+                    'agent_profiles.contact_phone'
+                )
+                ->where('users.status', '=', 2)
+                ->where('agent_profiles.agency_country', '=', $user_country)
+                ->get();
+        
+            return DataTables::of($users)
                 ->addColumn('action', function ($user) {
                     $string = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View</a> ';
                     if(auth()->user()->hasRole('superadministrator')){
@@ -203,27 +251,28 @@ class AgentController extends Controller
                     return $string;
                 })
                 ->addColumn('country', function($user) {
-                    return $user->company_country;
+                    return $user->company_country ?? 'N/A';
                 })
                 ->addColumn('agency_registered_name', function($user) {
-                    return $user->agency_registered_name;
+                    return $user->agency_registered_name ?? 'N/A';
                 })
                 ->addColumn('agency_email', function($user) {
-                    return $user->email ?? '';
+                    return $user->email ?? 'N/A';
                 })
                 ->addColumn('agency_city', function($user) {
-                    return $user->agency_city ?? '';
+                    return $user->agency_city ?? 'N/A';
                 })
                 ->addColumn('first_name', function($user) {
-                    return $user->name ?? '';
+                    return $user->name ?? 'N/A';
                 })
                 ->addColumn('phone', function($user) {
-                    return $user->contact_phone ?? '';
+                    return $user->contact_phone ?? 'N/A';
                 })
                 ->editColumn('id', 'ID: {{$id}}')
                 ->removeColumn('password')
                 ->make(true);
         }
+        
     }
     // end 3/11/2020
 
@@ -235,101 +284,127 @@ class AgentController extends Controller
 
     public function getAgentsApplicationData()
     {
-        if(auth()->user()->hasRole('superadministrator|administrator')){
-            // $users = User::where('status', 0) 
-            //             ->whereRoleIs('agent')  
-            //             ->orwhereRoleIs('part-timer')                     
-            //             ->get();
-
-
-
-            $users = User::where(function($query){
-                                $query->whereRoleIs('agent')
-                                        ->orwhereRoleIs('part-timer');
-                            })  
-                            ->where('status', 0)                 
-                            ->get();
-            // $users = User::with(['roles' => function($q){
-            //     $q->where('name', 'agent');
-            // }])
-            // ->where('status',0)
-            // ->get();
-
-            return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                $string  = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View </a> ';
-                $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.approve', $user->id).'" onclick="return confirm(\'Are you sure?\')">Approve </a> ';
-                $string .= '<a class="ml-1 btn btn-danger" href="'.route('admin.agent.reject', $user->id).'" onclick="return confirm(\'Are you sure?\')">Reject </a> ';
-                if(auth()->user()->hasRole('superadministrator')){
-                    $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
-                }
-                return $string;
-            })
-            ->addColumn('country', function($user) {
-                return $user->agent_profile['country_data']['name'];
-            })
-            ->addColumn('agency_registered_name', function($user) {
-                return $user->agent_profile['agency_registered_name'];
-            })
-            ->addColumn('agency_email', function($user) {
-                return $user->agent_profile['agency_email'];
-            })
-            ->addColumn('agency_city', function($user) {
-                return $user->agent_profile['company_city_data']['name'];
-            })
-            ->addColumn('first_name', function($user) {
-                return $user->agent_profile['first_name'];
-            })
-            ->addColumn('phone', function($user) {
-                return $user->agent_profile['contact_phone'];
-            })
-            ->editColumn('id', 'ID: {{$id}}')
-            ->removeColumn('password')
-            ->make(true);
-        }
-        if(auth()->user()->hasRole('cadmin')){
-            $user_country=UserProfile::where('user_id',auth()->user()->id)->pluck('company_country');
-            $users = DB::table('agent_profiles')
-                    ->leftjoin('countries','countries.id','=','agent_profiles.agency_country')
-                    ->leftjoin('cities','cities.id','=','agent_profiles.agency_city')
-                    ->leftjoin('users','users.id','=','agent_profiles.user_id')
-                    ->leftjoin('user_profiles','user_profiles.user_id','=','users.id')
-                    ->select('agent_profiles.agency_registered_name','cities.name as agency_city','countries.name as company_country','users.public_id','users.id','users.code','users.email','users.created_at','users.name','agent_profiles.contact_phone')
-                    ->where('users.status','=',0)
-                    ->where('agent_profiles.agency_country','=',$user_country)
+        if (auth()->user()->hasRole('superadministrator|administrator')) {
+            try {
+                // Fetch users based on role and status
+                $users = User::where(function ($query) {
+                    $query->whereRoleIs('agent')
+                        ->orWhereRoleIs('part-timer');
+                })
+                    ->where('status', 0)
+                    ->with('agent_profile') // Ensure related data is loaded
                     ->get();
-            return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                $string  = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View </a> ';
-                $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.approve', $user->id).'" onclick="return confirm(\'Are you sure?\')">Approve </a> ';
-                $string .= '<a class="ml-1 btn btn-danger" href="'.route('admin.agent.reject', $user->id).'" onclick="return confirm(\'Are you sure?\')">Reject </a> ';
-                if(auth()->user()->hasRole('superadministrator')){
-                    $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
+        
+                return DataTables::of($users)
+                    ->addColumn('action', function ($user) {
+                        $string = '<a href="' . route('admin.agent.show', $user->id) . '" class="btn btn-xs btn-primary">View</a> ';
+                        $string .= '<a class="ml-1 btn btn-success" href="' . route('admin.agent.approve', $user->id) . '" onclick="return confirm(\'Are you sure?\')">Approve</a> ';
+                        $string .= '<a class="ml-1 btn btn-danger" href="' . route('admin.agent.reject', $user->id) . '" onclick="return confirm(\'Are you sure?\')">Reject</a> ';
+                        if (auth()->user()->hasRole('superadministrator')) {
+                            $string .= '<a href="' . route('agent.edit', $user->id) . '" class="btn btn-xs btn-info">Edit</a> ';
+                        }
+                        return $string;
+                    })
+                    ->addColumn('country', function ($user) {
+                        return $user->agent_profile->country_data['name'] ?? 'N/A';
+                    })
+                    ->addColumn('agency_registered_name', function ($user) {
+                        return $user->agent_profile->agency_registered_name ?? 'N/A';
+                    })
+                    ->addColumn('agency_email', function ($user) {
+                        return $user->agent_profile->agency_email ?? 'N/A';
+                    })
+                    ->addColumn('agency_city', function ($user) {
+                        return $user->agent_profile->company_city_data['name'] ?? 'N/A';
+                    })
+                    ->addColumn('first_name', function ($user) {
+                        return $user->agent_profile->first_name ?? 'N/A';
+                    })
+                    ->addColumn('phone', function ($user) {
+                        return $user->agent_profile->contact_phone ?? 'N/A';
+                    })
+                    ->editColumn('id', 'ID: {{$id}}')
+                    ->removeColumn('password')
+                    ->make(true);
+            } catch (\Exception $e) {
+                \Log::error('DataTables Error: ' . $e->getMessage());
+                if (config('app.debug')) {
+                    return response()->json(['error' => $e->getMessage()], 500);
                 }
-                return $string;
-            })
-            ->addColumn('country', function($user) {
-                return $user->company_country;
-            })
-            ->addColumn('agency_registered_name', function($user) {
-                return $user->agency_registered_name;
-            })
-            ->addColumn('agency_email', function($user) {
-                return $user->email ?? '';
-            })
-            ->addColumn('agency_city', function($user) {
-                return $user->agency_city ?? '';
-            })
-            ->addColumn('first_name', function($user) {
-                return $user->name ?? '';
-            })
-            ->addColumn('phone', function($user) {
-                return $user->contact_phone ?? '';
-            })
-            ->editColumn('id', 'ID: {{$id}}')
-            ->removeColumn('password')
-            ->make(true);
+                return response()->json(['error' => 'Server error occurred.'], 500);
+            }
         }
+        
+        if (auth()->user()->hasRole('cadmin')) {
+            try {
+                // Fetch the country for the authenticated user
+                $user_country = UserProfile::where('user_id', auth()->user()->id)->pluck('company_country')->first();
+        
+                // Fetch users with related data
+                $users = DB::table('agent_profiles')
+                    ->leftJoin('countries', 'countries.id', '=', 'agent_profiles.agency_country')
+                    ->leftJoin('cities', 'cities.id', '=', 'agent_profiles.agency_city')
+                    ->leftJoin('users', 'users.id', '=', 'agent_profiles.user_id')
+                    ->leftJoin('user_profiles', 'user_profiles.user_id', '=', 'users.id')
+                    ->select(
+                        'agent_profiles.agency_registered_name',
+                        'cities.name as agency_city',
+                        'countries.name as company_country',
+                        'users.public_id',
+                        'users.id',
+                        'users.code',
+                        'users.email',
+                        'users.created_at',
+                        'users.name',
+                        'agent_profiles.contact_phone'
+                    )
+                    ->where('users.status', '=', 0)
+                    ->where('agent_profiles.agency_country', '=', $user_country)
+                    ->get();
+        
+                return DataTables::of($users)
+                    ->addColumn('action', function ($user) {
+                        $string = '<a href="' . route('admin.agent.show', $user->id) . '" class="btn btn-xs btn-primary">View</a> ';
+                        $string .= '<a class="ml-1 btn btn-success" href="' . route('admin.agent.approve', $user->id) . '" onclick="return confirm(\'Are you sure?\')">Approve</a> ';
+                        $string .= '<a class="ml-1 btn btn-danger" href="' . route('admin.agent.reject', $user->id) . '" onclick="return confirm(\'Are you sure?\')">Reject</a> ';
+                        if (auth()->user()->hasRole('superadministrator')) {
+                            $string .= '<a href="' . route('agent.edit', $user->id) . '" class="btn btn-xs btn-info">Edit</a> ';
+                        }
+                        return $string;
+                    })
+                    ->addColumn('country', function ($user) {
+                        return $user->company_country ?? 'N/A';
+                    })
+                    ->addColumn('agency_registered_name', function ($user) {
+                        return $user->agency_registered_name ?? 'N/A';
+                    })
+                    ->addColumn('agency_email', function ($user) {
+                        return $user->email ?? 'N/A';
+                    })
+                    ->addColumn('agency_city', function ($user) {
+                        return $user->agency_city ?? 'N/A';
+                    })
+                    ->addColumn('first_name', function ($user) {
+                        return $user->name ?? 'N/A';
+                    })
+                    ->addColumn('phone', function ($user) {
+                        return $user->contact_phone ?? 'N/A';
+                    })
+                    ->editColumn('id', function ($user) {
+                        return 'ID: ' . $user->id;
+                    })
+                    ->rawColumns(['action']) // Allows the 'action' column to render HTML
+                    ->removeColumn('password')
+                    ->make(true);
+            } catch (\Exception $e) {
+                \Log::error('DataTables Error: ' . $e->getMessage());
+                if (config('app.debug')) {
+                    return response()->json(['error' => $e->getMessage()], 500);
+                }
+                return response()->json(['error' => 'Server error occurred.'], 500);
+            }
+        }
+        
     }
 
     public function rejectedAgentApplication()
@@ -341,80 +416,95 @@ class AgentController extends Controller
     {
         if(auth()->user()->hasRole('superadministrator|administrator')){
             $users = User::where('status', -1)->whereRoleIs('agent')->get();
-
+        
             return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                $string  = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View </a> ';
-                $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.restore', $user->id).'" onclick="return confirm(\'Are you sure?\')">Restore </a> ';
-                if(auth()->user()->hasRole('superadministrator')){
-                    $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
-                }
-                return $string;
-            })
-            ->addColumn('country', function($user) {
-                return $user->agent_profile['country_data']['name'];
-            })
-            ->addColumn('agency_registered_name', function($user) {
-                return $user->agent_profile['agency_registered_name'];
-            })
-            ->addColumn('agency_email', function($user) {
-                return $user->agent_profile['agency_email'];
-            })
-            ->addColumn('agency_city', function($user) {
-                return $user->agent_profile['company_city_data']['name'];
-            })
-            ->addColumn('first_name', function($user) {
-                return $user->agent_profile['first_name'];
-            })
-            ->addColumn('phone', function($user) {
-                return $user->agent_profile['contact_phone'];
-            })
-            ->editColumn('id', 'ID: {{$id}}')
-            ->removeColumn('password')
-            ->make(true);
+                ->addColumn('action', function ($user) {
+                    $string  = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View </a>';
+                    $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.restore', $user->id).'" onclick="return confirm(\'Are you sure?\')">Restore </a>';
+                    if(auth()->user()->hasRole('superadministrator')){
+                        $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a>';
+                    }
+                    return $string;
+                })
+                ->addColumn('country', function($user) {
+                    return $user->agent_profile['country_data']['name'] ?? 'N/A';
+                })
+                ->addColumn('agency_registered_name', function($user) {
+                    return $user->agent_profile['agency_registered_name'] ?? 'N/A';
+                })
+                ->addColumn('agency_email', function($user) {
+                    return $user->agent_profile['agency_email'] ?? 'N/A';
+                })
+                ->addColumn('agency_city', function($user) {
+                    return $user->agent_profile['company_city_data']['name'] ?? 'N/A';
+                })
+                ->addColumn('first_name', function($user) {
+                    return $user->agent_profile['first_name'] ?? 'N/A';
+                })
+                ->addColumn('phone', function($user) {
+                    return $user->agent_profile['contact_phone'] ?? 'N/A';
+                })
+                ->editColumn('id', 'ID: {{$id}}')
+                ->removeColumn('password')
+                ->make(true);
         }
+        
         if(auth()->user()->hasRole('cadmin')){
-            $user_country=UserProfile::where('user_id',auth()->user()->id)->pluck('company_country');
+            $user_country = UserProfile::where('user_id', auth()->user()->id)->pluck('company_country')->first(); // .first() to get a single value
+        
             $users = DB::table('agent_profiles')
-                    ->leftjoin('countries','countries.id','=','agent_profiles.agency_country')
-                    ->leftjoin('cities','cities.id','=','agent_profiles.agency_city')
-                    ->leftjoin('users','users.id','=','agent_profiles.user_id')
-                    ->leftjoin('user_profiles','user_profiles.user_id','=','users.id')
-                    ->select('agent_profiles.agency_registered_name','cities.name as agency_city','countries.name as company_country','users.public_id','users.id','users.code','users.email','users.created_at','users.name','agent_profiles.contact_phone')
-                    ->where('users.status','=',-1)
-                    ->where('agent_profiles.agency_country','=',$user_country)
-                    ->get();
+                ->leftjoin('countries', 'countries.id', '=', 'agent_profiles.agency_country')
+                ->leftjoin('cities', 'cities.id', '=', 'agent_profiles.agency_city')
+                ->leftjoin('users', 'users.id', '=', 'agent_profiles.user_id')
+                ->leftjoin('user_profiles', 'user_profiles.user_id', '=', 'users.id')
+                ->select(
+                    'agent_profiles.agency_registered_name',
+                    'cities.name as agency_city',
+                    'countries.name as company_country',
+                    'users.public_id',
+                    'users.id',
+                    'users.code',
+                    'users.email',
+                    'users.created_at',
+                    'users.name',
+                    'agent_profiles.contact_phone'
+                )
+                ->where('users.status', '=', -1)
+                ->where('agent_profiles.agency_country', '=', $user_country)
+                ->get();
+        
             return DataTables::of($users)
-            ->addColumn('action', function ($user) {
-                $string  = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View </a> ';
-                $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.restore', $user->id).'" onclick="return confirm(\'Are you sure?\')">Restore </a> ';
-                if(auth()->user()->hasRole('superadministrator')){
-                    $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a> ';
-                }
-                return $string;
-            })
-            ->addColumn('country', function($user) {
-                return $user->company_country;
-            })
-            ->addColumn('agency_registered_name', function($user) {
-                return $user->agency_registered_name;
-            })
-            ->addColumn('agency_city', function($user) {
-                return $user->agency_city ?? '';
-            })
-            ->addColumn('agency_email', function($user) {
-                return $user->email ?? '';
-            })
-            ->addColumn('first_name', function($user) {
-                return $user->name ?? '';
-            })
-            ->addColumn('phone', function($user) {
-                return $user->contact_phone ?? '';
-            })
-            ->editColumn('id', 'ID: {{$id}}')
-            ->removeColumn('password')
-            ->make(true);
+                ->addColumn('action', function ($user) {
+                    $string  = '<a href="'.route('admin.agent.show', $user->id).'" class="btn btn-xs btn-primary">View </a>';
+                    $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.restore', $user->id).'" onclick="return confirm(\'Are you sure?\')">Restore </a>';
+                    if(auth()->user()->hasRole('superadministrator')){
+                        $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a>';
+                    }
+                    return $string;
+                })
+                ->addColumn('country', function($user) {
+                    return $user->company_country ?? 'N/A';
+                })
+                ->addColumn('agency_registered_name', function($user) {
+                    return $user->agency_registered_name ?? 'N/A';
+                })
+                ->addColumn('agency_city', function($user) {
+                    return $user->agency_city ?? 'N/A';
+                })
+                ->addColumn('agency_email', function($user) {
+                    return $user->email ?? 'N/A';
+                })
+                ->addColumn('first_name', function($user) {
+                    return $user->name ?? 'N/A';
+                })
+                ->addColumn('phone', function($user) {
+                    return $user->contact_phone ?? 'N/A';
+                })
+                ->editColumn('id', 'ID: {{$id}}')
+                ->removeColumn('password')
+                ->make(true);
         }
+        
     
     }
 
