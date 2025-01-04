@@ -7,9 +7,9 @@
                   <!-- Slide 1 -->
                   <div class="carousel-item active" style="background-image: url({{ asset('site/img/slide/1.jpg') }});">
                       <div class="carousel-container row align-items-center">
-                          <div class="carousel-content animate__animated animate__fadeInUp col-sm-4">
+                          <div class="carousel-content animate__animated animate__fadeInUp">
                               <h2 style="text-align: center;">Your search for a career begins here </h2>
-                              <p>Wherever you go, Go with all your heart with enthusiasm, passionate and responsibility.</p>
+                              <p style="text-align: center;" >Wherever you go, Go with all your heart with enthusiasm, passionate and responsibility.</p>
                           </div>
 
                           {{-- <div class="col-sm-2"></div> 
