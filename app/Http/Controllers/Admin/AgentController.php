@@ -423,6 +423,7 @@ class AgentController extends Controller
                     $string .= '<a class="ml-1 btn btn-success" href="'.route('admin.agent.restore', $user->id).'" onclick="return confirm(\'Are you sure?\')">Restore </a>';
                     if(auth()->user()->hasRole('superadministrator')){
                         $string .= '<a href="'.route('agent.edit', $user->id).'" class="btn btn-xs btn-info">Edit</a>';
+                        $string .= '<a href="'.route('admin.agent.delete', $user->id).'" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure?\')" >Delete</a>';
                     }
                     return $string;
                 })
@@ -627,7 +628,8 @@ class AgentController extends Controller
 
         Session::flash('message', 'Deleted successfully!'); 
         Session::flash('alert-class', 'alert-success');
-        return redirect()->route('admin.agent.index');
+       // return redirect()->route('admin.agent.index');
+        return redirect()->back();
     }
 
     /**

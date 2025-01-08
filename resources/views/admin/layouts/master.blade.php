@@ -232,7 +232,8 @@
                                             </li>
                                             <li class="{{ ( (Route::currentRouteName() === "admin.rejectedAgentApplication") ? "active" : "") }}">
                                                 <!-- pending agent application count added 1/5/2020 -->
-                                                <a href="{{route('admin.rejectedAgentApplication')}}">Pending Apllications ({{$pending_agent_application}})</a>
+                                                {{-- <a href="{{route('admin.rejectedAgentApplication')}}">Pending Apllications ({{$pending_agent_application}})</a> --}}
+                                                <a href="{{route('admin.rejectedAgentApplication')}}">Rejected Pending Apllications ({{$pending_agent_application}})</a>
                                             </li>
                                         </ul>
                                     </li>
