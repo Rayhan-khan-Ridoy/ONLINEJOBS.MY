@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 @section('content')
     <div class="title-block">
-        <h1 class="title">Pending Agent Applications </h1>
+        <h1 class="title"> Rejected Agent - Pending Applications </h1>
     </div>
     <section class="section">
         <table id="users-table" class="table table-condensed">
