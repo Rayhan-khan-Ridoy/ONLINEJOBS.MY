@@ -34,8 +34,11 @@ use App\Http\Controllers\Api\PartnerController;
 Route::get('/countries', [CountryController::class, 'index']);
 
 Route::get('/states', [StateController::class, 'index']);
+Route::get('/get-states/{country_id}', [StateController::class, 'getStates'])->name('dynamic.getStates'); //newly added by Rayhan , 15-1-2025
 
 Route::get('/cities', [CityController::class, 'index']);
+Route::get('/get-cities/{state_id}', [CityController::class, 'getCities'])->name('dynamic.getCities');  //newly added by Rayhan , 15-1-2025
+
 
 Route::get('/positions', [PositionController::class, 'index']);
 

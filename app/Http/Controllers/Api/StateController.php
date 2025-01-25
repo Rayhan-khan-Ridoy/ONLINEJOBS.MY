@@ -16,4 +16,22 @@ class StateController extends Controller
             'message'=>'States data fetch success'
         ],200);
     }
+
+    public function getStates($country_id)
+    {
+        try {
+            $states = State::select('id', 'name')
+                           ->where('country_id', $country_id)
+                           ->where('status', 1)  // Optional: Filter by status if needed
+                           ->get();
+
+            if ($states->isEmpty()) {
+                return response()->json(['message' => 'No states found'], 404);
+            }
+
+            return response()->json($states);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch states', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

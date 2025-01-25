@@ -16,4 +16,22 @@ class CityController extends Controller
             'message'=>'City data fetch success'
         ],200);
     }
+
+    public function getCities($state_id)
+    {
+        try {
+            $cities = City::select('id', 'name')
+                          ->where('state_id', $state_id)
+                          ->where('status', 1)  // Optional: Filter by status if needed
+                          ->get();
+
+            if ($cities->isEmpty()) {
+                return response()->json(['message' => 'No cities found'], 404);
+            }
+
+            return response()->json($cities);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch cities', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

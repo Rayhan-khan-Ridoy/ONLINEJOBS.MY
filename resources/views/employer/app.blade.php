@@ -18,6 +18,8 @@
     </script>
     <link rel="stylesheet" href="{{ asset('css/floating-wpp.css') }}">
     <script type="text/javascript" src="{{ asset('js/floating-wpp.js') }}"></script>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- CSRF Token -->

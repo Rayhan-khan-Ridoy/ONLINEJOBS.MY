@@ -382,97 +382,81 @@ class AgentProfileController extends Controller
 
     public function saveuser( Request $request)
     {
-
         /*Validation*/
-        $this->validate($request, [
-            // 'name' => 'required',
-            'address' => 'required',
-            'company_city' => 'required',
-            'company_state' => 'required',
-            'nationality'   => 'required',
-            'gender'  =>  'required',
-            'phone' =>  'required',
-            'image' =>  'required',
-            'emergency_contact_name' => 'required',
-            'emergency_contact_relationship' => 'required',
-            'emergency_contact_phone'  =>   'required',
-            'emergency_contact_address' =>  'required',
-            'passport_number' =>  'required',
-            'passport_issue_place'=>'required',
-            'passport_issue_date'  =>'required',
-            'passport_expire_date'  =>'required',
-            'passport_file' =>'required',
-            'date_of_birth' => 'date',
-            'passport_issue_date' => 'date',
-            'passport_expire_date' => 'date',
-        ]);
-        if($request->file('image')){
-            $this->validate($request, [
-                'image' => 'required|max:1024',
-            ]);
-        }
-        if($request->file('full_image')){
-            $this->validate($request, [
-                'full_image' => 'max:1024',
-            ]);
-        }
-        if($request->file('passport_file')){
-            $this->validate($request, [
-                'passport_file' => 'max:1024',
-            ]);
-        }
-        if($request->file('medical_certificate')){
-            $this->validate($request, [
-                'medical_certificate' => 'max:1024',
-            ]);
-        }
-        if($request->file('immigration_security_clearence')){
-            $this->validate($request, [
-                'immigration_security_clearence' => "max:1024"
-            ]);
-        }
+        // $request=$this->validate($request, [
+        //     // 'name' => 'required',
+        //     'address' => 'required',
+        //     'company_city' => 'required',
+        //     'company_state' => 'required',
+        //     'nationality'   => 'required',
+        //     'gender'  =>  'required',
+        //     'phone' =>  'required',
+        //     'image' =>  'required',
+        //     'emergency_contact_name' => 'required',
+        //     'emergency_contact_relationship' => 'required',
+        //     'emergency_contact_phone'  =>   'required',
+        //     'emergency_contact_address' =>  'required',
+        //     'passport_number' =>  'required',
+        //     'passport_issue_place'=>'required',
+        //     'passport_issue_date'  =>'required',
+        //     'passport_expire_date'  =>'required',
+        //     'passport_file' =>'required',
+        //     'date_of_birth' => 'date',
+        //     'passport_issue_date' => 'date',
+        //     'passport_expire_date' => 'date',
+        // ]);
+       
         // if($request->file('image')){
         //     $this->validate($request, [
-        //         'image' => 'mimes:jpg,jpeg,png|image|max:1024',
+        //         'image' => 'required|max:1024',
         //     ]);
         // }
         // if($request->file('full_image')){
         //     $this->validate($request, [
-        //         'full_image' => 'mimes:jpg,jpeg,png|image|max:1024',
+        //         'full_image' => 'max:1024',
         //     ]);
         // }
         // if($request->file('passport_file')){
         //     $this->validate($request, [
-        //         'passport_file' => 'mimes:pdf,jpg,jpeg,png|max:1024',
+        //         'passport_file' => 'max:1024',
         //     ]);
         // }
         // if($request->file('medical_certificate')){
         //     $this->validate($request, [
-        //         'medical_certificate' => 'mimes:pdf,jpg,jpeg,png|max:1024',
+        //         'medical_certificate' => 'max:1024',
         //     ]);
         // }
         // if($request->file('immigration_security_clearence')){
         //     $this->validate($request, [
-        //         'immigration_security_clearence' => "mimes:pdf,jpg,jpeg,png|max:1024"
+        //         'immigration_security_clearence' => "max:1024"
         //     ]);
         // }
-        //return request('Drill');
-        //return var_dump($request->Welding);
-        // $skills = Skill::where('status', '=', 1)->get();
-        // foreach($skills as $skill){
-        //     $arr[$skill->slug] = request($skill->slug) ?? 'No';
-        // }
-        // //return $arr;
-        // $var = json_encode($arr);
-        // $vars= json_decode($var);
-        //  $arrs = (array) $vars;
-        // foreach($skills as $skill){
-        //     $checked = $arrs[$skill->slug] == 'Yes'?  'checked': '';
-        //     echo '<label for="able_to_cook">'.$skill->name.'</label>';
-        //     echo '<input type="checkbox" id="" name="'.$skill->slug.'" value="Yes"'.$checked.'>';
-        // }
+ 
+          // Validation Rules
+        $rules = [
+            'address' => 'required',
+            'company_city' => 'required',
+            'company_state' => 'required',
+            'nationality' => 'required',
+            'gender' => 'required',
+            'phone' => 'required',
+            'image' => 'required|image|max:1024',
+            'emergency_contact_name' => 'required',
+            'emergency_contact_relationship' => 'required',
+            'emergency_contact_phone' => 'required',
+            'emergency_contact_address' => 'required',
+            'passport_number' => 'required',
+            'passport_issue_place' => 'required',
+            'passport_issue_date' => 'required|date',
+            'passport_expire_date' => 'required|date',
+            'passport_file' => 'required|file|max:1024',
+            'date_of_birth' => 'nullable|date',
+            'full_image' => 'nullable|image|max:1024',
+            'medical_certificate' => 'nullable|file|max:1024',
+            'immigration_security_clearence' => 'nullable|file|max:1024',
+        ];
 
-        // die();
+        $this->validate($request, $rules);
 
         $user = new User;
         $user->name = $request->name;
@@ -495,6 +479,7 @@ class AgentProfileController extends Controller
         $user->code = $this->user_code($user_country);
         $user->save();
         $user->attachRole($role);
+        
 
         $profile = new Profile;
         foreach($skills as $skill){
@@ -666,6 +651,8 @@ class AgentProfileController extends Controller
 
         $profile->save();
 
+        // dd($profile);
+
         if($request->employer_name && $request->employer_name[0] != null){
             for($i=0; $i< count($request->employer_name); $i++){
                 $experience = new Experience;
@@ -684,11 +671,12 @@ class AgentProfileController extends Controller
                 $education->user_id = $user->id;
                 $education->education_level = $request->education_level[$i];
                 $education->education_remark = $request->education_remark[$i];
+
                 $education->save();
             }
         }
         
-        Session::flash('message', ucfirst($role).' Created successfully!! now update profile'); 
+        Session::flash('message', ucfirst($role).' added successfully as foreign worker !');
         Session::flash('alert-class', 'alert-success');
 
         //Send notification to admins
@@ -696,7 +684,8 @@ class AgentProfileController extends Controller
         $admins = User::whereRoleIs('superadministrator')->get();
         Notification::send($admins, new MaidWorkerEntry($data));
 
-        return redirect()->route('admin.home');
+        // return redirect()->route('admin.home');
+        return redirect()->to('admin/worker');
     }
 
     public function user_code($country_id)

@@ -37,8 +37,7 @@
                             <!-- <div class="row"> -->
                             @if (request()->t == 'gw' || request()->t == 'dm')
                                 <!-- Hidden field for GW/DM user type -->
-                                <input type="hidden" name="role"
-                                    value="{{ request()->t == 'gw' ? 'worker' : 'maid' }}">
+                                <input type="hidden" name="role" value="{{ request()->t == 'gw' ? 'worker' : 'maid' }}">
                             @else
                                 <div class="col-md-6">
                                     <div class="form-group dis-cls">
@@ -76,10 +75,10 @@
                                         value="{{ old('name') }}" placeholder="Name">
                                     <small id="nameError" style="visibility:hidden;color:red">Name is mandatory</small>
                                     <!-- @if ($errors->has('name'))
-    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('name') }}</strong>
-                                        </span>
-    @endif -->
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('name') }}</strong>
+                                                </span>
+                                        @endif -->
                                 </div>
 
                                 <div class="col-sm-3">
@@ -93,10 +92,10 @@
                                     <small id="dobError" style="visibility:hidden;color:red">Date of Birth is
                                         mandatory</small>
                                     <!-- @if ($errors->has('date_of_birth'))
-    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('date_of_birth') }}</strong>
-                                        </span>
-    @endif -->
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $errors->first('date_of_birth') }}</strong>
+                                                </span>
+                                         @endif -->
                                 </div>
                                 <div class="col-sm-3">
                                     <label for="phone">{{ __('Contact No. ') }}<span
@@ -108,8 +107,8 @@
                                         mandatory</small>
                                     <!-- @if ($errors->has('phone'))
     <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('phone') }}</strong>
-                                        </span>
+                                                    <strong>{{ $errors->first('phone') }}</strong>
+                                                </span>
     @endif -->
                                 </div>
                             </div>
@@ -130,8 +129,8 @@
                                         mandatory</small>
                                     <!-- @if ($errors->has('gender'))
     <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('gender') }}</strong>
-                                        </span>
+                                                    <strong>{{ $errors->first('gender') }}</strong>
+                                                </span>
     @endif -->
                                 </div>
                                 <div class="col-sm-3">
@@ -191,68 +190,37 @@
                             </div>
                             <hr>
                             <div class="form-group row">
+                                <!-- Country Dropdown -->
                                 <div class="col-sm-6" id="com_country">
                                     <label for="company_country">Country</label><span class="text-danger"> *</span>
                                     <select name="company_country" id="company_country" required class="form-control">
-                                        @if (Auth::user()->hasRole('sub-agent') && Auth::user()->status == 1)
-                                            @foreach ($countrys as $country)
-                                                <option value="{{ $country->id }}"
-                                                    {{ $country->id == old('company_country') ? 'selected' : '' }}>
-                                                    {{ $country->name }}</option>
-                                            @endforeach
-                                        @endif
-                                        @if (Auth::user()->hasRole('superadministrator|agent|part-timer') && Auth::user()->status == 1)
-                                            <option value="" disable="true" selected="true">- - - - - - - - - - - -
-                                                - - - - - Select Country - - - - - - - - - - - - - - - - -</option>
-                                            @foreach ($nationalitys as $key => $value)
-                                                <option value="{{ $value->id }}"
-                                                    {{ $value->id == old('company_country') ? 'selected' : '' }}>
-                                                    {{ $value->name }}</option>
-                                            @endforeach
-                                        @endif
+                                        <option value="" disable="true" selected="true">- - - - - - -- - - -- - - - - - - - - - - Select Country - - - -- - - -- - - - - - - - - - - - - - - - -</option>
+                                        @foreach ($nationalitys as $key => $country)
+                                            <option value="{{ $country->id }}"
+                                                {{ $country->id == old('company_country') ? 'selected' : '' }}>
+                                                {{ $country->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
-                                    <small id="company_countryError" style="visibility:hidden;color:red">Country is
-                                        mandatory</small>
+                                    <small id="company_countryError" style="visibility:hidden;color:red">Country is mandatory</small>
                                 </div>
+                            
+                                <!-- State Dropdown -->
                                 <div class="col-sm-3" id="com_state">
-                                    <label for="state">State/Province/Division</label><span class="text-danger">
-                                        *</span>
+                                    <label for="company_state">State/Province/Division</label><span class="text-danger"> *</span>
                                     <select name="company_state" id="company_state" required class="form-control">
-                                        @if (Auth::user()->hasRole('superadministrator|agent|part-timer') && Auth::user()->status == 1)
-                                            <option value="" disable="true" selected="true">------- Select State
-                                                -------</option>
-                                        @endif
-                                        @if (Auth::user()->hasRole('sub-agent') && Auth::user()->status == 1)
-                                            <option value="" disable="true" selected="true">------- Select State
-                                                -------</option>
-                                            @foreach ($states as $state)
-                                                <option value="{{ $state->id }}"
-                                                    {{ $state->id == old('company_state') ? 'selected' : '' }}>
-                                                    {{ $state->name }}</option>
-                                            @endforeach
-                                        @endif
+                                        <option value="" disable="true" selected="true">- - - - - - - - - Select State - - - - - - - - - - - - - - - - -</option>
                                     </select>
-                                    <small id="company_stateError" style="visibility:hidden;color:red">State is
-                                        mandatory</small>
-                                    <!-- @if ($errors->has('company_state'))
-    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('company_state') }}</strong>
-                                        </span>
-    @endif -->
+                                    <small id="company_stateError" style="visibility:hidden;color:red">State is mandatory</small>
                                 </div>
+                            
+                                <!-- City Dropdown -->
                                 <div class="col-sm-3" id="com_city">
-                                    <label for="city">City</label><span class="text-danger"> *</span>
+                                    <label for="company_city">City</label><span class="text-danger"> *</span>
                                     <select name="company_city" id="company_city" required class="form-control">
-                                        <option value="" disable="true" selected="true">------- Select City -------
-                                        </option>
+                                        <option value="" disable="true" selected="true"> - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>
                                     </select>
-                                    <small id="company_cityError" style="visibility:hidden;color:red">City is
-                                        mandatory</small>
-                                    <!-- @if ($errors->has('company_city'))
-    <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('company_city') }}</strong>
-                                        </span>
-    @endif -->
+                                    <small id="company_cityError" style="visibility:hidden;color:red">City is mandatory</small>
                                 </div>
                             </div>
                             <hr>
@@ -284,27 +252,27 @@
                             </div>
                             <hr>
                             <!-- <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <label for="city">{{ __('City ') }}<span class="text-danger">*</span></label>
-                                    <input id="city" type="text" class="form-control{{ $errors->has('city') ? ' is-invalid' : '' }}" name="city" value="{{ old('city') }}" placeholder="City" required>
-        
-                                    @if ($errors->has('city'))
+                                        <div class="col-sm-6">
+                                            <label for="city">{{ __('City ') }}<span class="text-danger">*</span></label>
+                                            <input id="city" type="text" class="form-control{{ $errors->has('city') ? ' is-invalid' : '' }}" name="city" value="{{ old('city') }}" placeholder="City" required>
+                
+                                            @if ($errors->has('city'))
     <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('city') }}</strong>
-                                        </span>
+                                                    <strong>{{ $errors->first('city') }}</strong>
+                                                </span>
     @endif
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="state">{{ __('State/Proviace ') }}<span class="text-danger">*</span></label>
-                                    <input id="state" type="text" class="form-control{{ $errors->has('state') ? ' is-invalid' : '' }}" name="state" value="{{ old('state') }}" placeholder="State/Proviace" required>
-        
-                                    @if ($errors->has('state'))
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="state">{{ __('State/Proviace ') }}<span class="text-danger">*</span></label>
+                                            <input id="state" type="text" class="form-control{{ $errors->has('state') ? ' is-invalid' : '' }}" name="state" value="{{ old('state') }}" placeholder="State/Proviace" required>
+                
+                                            @if ($errors->has('state'))
     <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $errors->first('state') }}</strong>
-                                        </span>
+                                                    <strong>{{ $errors->first('state') }}</strong>
+                                                </span>
     @endif
-                                </div>
-                            </div> -->
+                                        </div>
+                                    </div> -->
                             <div class="form-group row">
                                 <div class="col-sm-3">
                                     <label for="nationality">{{ __('Nationality ') }}<span
@@ -483,8 +451,8 @@
                                                         file is not Image file</small>
                                                     <!-- @if ($errors->has('image'))
     <span class="invalid-feedback" role="alert">
-                                                            <strong>{{ $errors->first('image') }}</strong>
-                                                        </span>
+                                                                    <strong>{{ $errors->first('image') }}</strong>
+                                                                </span>
     @endif -->
                                                 </div>
                                             </div>
@@ -786,8 +754,8 @@
                                                 placeholder="Education Remark">
                                         </div>
                                         <!-- <div class="col-md-12">
-                                    <hr class="mt-4 mb-4"/>
-                                </div> -->
+                                            <hr class="mt-4 mb-4"/>
+                                        </div> -->
                                     </div>
                                     <hr>
                                     @if (old('education_level'))
@@ -852,23 +820,23 @@
                                                                 placeholder="Education Remark">
                                                         </div>
                                                         <!-- <div class="col-md-6">
-                                                    <div id="div_id_1_education_level" class="form-group dis-cls">
-                                                        <label for="id_1_education_level">{{ __('Education Level') }}</label>
-                                                        {{-- <input id="id_1_education_level" type="text" class="form-control" name="education_level[]" placeholder="Education Level"> --}}
-                                                        <select name="education_level[]" id="id_1_education_level" class="form-control">
-                                                            <option value="">--Select Education Level--</option>
-                                                            @foreach ($education_levels as $education_level)
+                                                            <div id="div_id_1_education_level" class="form-group dis-cls">
+                                                                <label for="id_1_education_level">{{ __('Education Level') }}</label>
+                                                                {{-- <input id="id_1_education_level" type="text" class="form-control" name="education_level[]" placeholder="Education Level"> --}}
+                                                                <select name="education_level[]" id="id_1_education_level" class="form-control">
+                                                                    <option value="">--Select Education Level--</option>
+                                                                    @foreach ($education_levels as $education_level)
     <option value="{{ $education_level->id }}" {{ $education_level->id == old('nationality') ? 'selected' : '' }}>{{ $education_level->name }}</option>
     @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div> -->
+                                                                </select>
+                                                            </div>
+                                                        </div> -->
                                                         <!-- <div class="col-md-6">
-                                                    <div id="div_id_1_education_remark" class="form-group dis-cls">
-                                                        <label for="id_1_education_remark">{{ __('Education Remark') }}</label>
-                                                        <input id="id_1_education_remark" type="text" class="form-control" name="education_remark[]" placeholder="Education Remark">
-                                                    </div>
-                                                </div> -->
+                                                            <div id="div_id_1_education_remark" class="form-group dis-cls">
+                                                                <label for="id_1_education_remark">{{ __('Education Remark') }}</label>
+                                                                <input id="id_1_education_remark" type="text" class="form-control" name="education_remark[]" placeholder="Education Remark">
+                                                            </div>
+                                                        </div> -->
                                                         <div class="col-md-12">
                                                             <hr class="mt-4 mb-4" />
                                                         </div>
@@ -1038,11 +1006,11 @@
                                                         </div>
                                                     </div>
                                                     <!-- <div class="col-md-12">
-                                                        <div id="div_id_1_remark" class="form-group dis-cls">
-                                                            <label for="id_1_remark">{{ __('Remark') }}</label>
-                                                            <input id="id_1_remark" type="text" class="form-control" name="remark[]" placeholder="Remark">
-                                                        </div>
-                                                    </div> -->
+                                                                <div id="div_id_1_remark" class="form-group dis-cls">
+                                                                    <label for="id_1_remark">{{ __('Remark') }}</label>
+                                                                    <input id="id_1_remark" type="text" class="form-control" name="remark[]" placeholder="Remark">
+                                                                </div>
+                                                            </div> -->
                                                     <div class="col-md-12">
                                                         <hr class="mt-4 mb-4" />
                                                     </div>
@@ -1192,7 +1160,7 @@
                 var min = 5,
                     max = 20;
                 var rand = Math.floor(Math.random() * (max - min + 1) +
-                min); //Generate Random number between 5 - 20
+                    min); //Generate Random number between 5 - 20
                 // post time in a <span> tag in the Alert
                 $("#time").html('Next alert in ' + rand + ' seconds');
                 $('#timed-alert').fadeIn(500).delay(3000).fadeOut(500);
@@ -1204,7 +1172,7 @@
         $('.btn').click(function(event) {
             event.preventDefault();
             var target = $(this).data('target');
-            // console.log('#'+target);
+            console.log('#' + target);
             $('#click-alert').html('data-target= ' + target).fadeIn(50).delay(3000).fadeOut(1000);
 
         });
@@ -1286,7 +1254,7 @@
 
 
 
-            // console.log(imageValue);
+           
 
             if (nameValue === '') {
                 document.getElementById("nameError").style.visibility = "visible";
@@ -1365,7 +1333,8 @@
             //     document.getElementById("immigration_security_clearenceError").style.visibility = "visible";
             // }
             else {
-                console.log('success');
+                console.log('Successfully we are going to save data - Rayhan');
+                // console.log(nameValue); await;
                 // This function will figure out which tab to display
                 var x = document.getElementsByClassName("tab");
                 // Exit the function if any field in the current tab is invalid:
@@ -1378,7 +1347,8 @@
                 if (currentTab >= x.length) {
                     // ... the form gets submitted:
                     document.getElementById("gm_dm_form").submit();
-                    return false;
+                    event.preventDefault();
+                    //return false;
                 }
                 // Otherwise, display the correct tab:
                 showTab(currentTab);
@@ -1635,4 +1605,83 @@
             placeholder: "Other Skills"
         });
     </script>
+
+<!--below code newly added by Rayhan khan Rayhan for making country,states & cities dynamic - 15-1-2025-->
+<script>
+    $(document).ready(function () {
+        // Fetch states based on selected country
+        $('#company_country').change(function () {
+            let countryId = $(this).val();
+            // let countryName = $('#company_contry option:selected').text();
+
+            // console.log(countryName);
+            let stateDropdown = $('#company_state');
+            let cityDropdown = $('#company_city');
+
+            // Clear previous options
+            stateDropdown.empty().append('<option value="" disable="true" selected="true">- - - - - - - - - - - - - - Select State - - - - - - - - - - - - - - - - -</option>');
+            cityDropdown.empty().append('<option value="" disable="true" selected="true">- - - - - - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>');
+
+            if (countryId) {
+                try {
+                    $.ajax({
+                        url: `/api/get-states/${countryId}`,
+                        type: 'GET',
+                        success: function (data) {
+                            if (data.length > 0) {
+                                data.forEach(function (state) {
+                                    stateDropdown.append(`<option value="${state.id}">${state.name}</option>`);
+                                });
+                            } else {
+                                stateDropdown.append('<option value="" disable="true">No states found</option>');
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching states:', textStatus, errorThrown);
+                            alert('Failed to fetch states. No states are available for this country. Please try again later.');
+                        },
+                    });
+                } catch (error) {
+                    console.error('AJAX error', error);
+                    alert('An error occurred while fetching states. Please try again later.');
+                }
+            }
+        });
+
+        // Fetch cities based on selected state
+        $('#company_state').change(function () {
+            let stateId = $(this).val();
+            let cityDropdown = $('#company_city');
+
+            // Clear previous options
+            cityDropdown.empty().append('<option value="" disable="true" selected="true">- - - - - - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>');
+
+            if (stateId) {
+                try {
+                    $.ajax({
+                        url: `/api/get-cities/${stateId}`,
+                        type: 'GET',
+                        success: function (data) {
+                            if (data.length > 0) {
+                                data.forEach(function (city) {
+                                    cityDropdown.append(`<option value="${city.id}">${city.name}</option>`);
+                                });
+                            } else {
+                                cityDropdown.append('<option value="" disable="true">No cities found</option>');
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error fetching cities:', textStatus, errorThrown);
+                            alert('Failed to fetch city. No cities are available for this country. Please try again later.');
+                        },
+                    });
+                } catch (error) {
+                    console.error('AJAX error', error);
+                    alert('An error occurred while fetching cities. Please try again later.');
+                }
+            }
+        });
+    });
+</script>
+
 @endsection
