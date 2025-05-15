@@ -40,7 +40,6 @@
                                 <!-- Email input -->
                                 <h3 class="card-title text-center mb-5">Employer Login</h3>
                                 <div class="form-outline mb-3">
-                                    <?php /*<input id="name" type="text" name="email" value="" placeholder="Username" required class="form-control" /> */?>
                                     <label class="form-label" for="form1Example1">Email address</label>
                                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
@@ -76,8 +75,11 @@
                                     <a href="#!">Forgot password?</a>
                                     <div class="col text-center">
                                     </div>
-                                    <div class="col d-flex justify-content-center">
+                                    {{-- <div class="col d-flex justify-content-center">
                                         Not a member?&nbsp; <a href="{{route('employer.create')}}">SignUp </a>
+                                    </div> --}}
+                                    <div class="col d-flex justify-content-center">
+                                        Not a member?&nbsp; <a href="{{route('getEmail')}}">SignUp </a>
                                     </div>
                                     <!-- Submit button -->
                                 </div>

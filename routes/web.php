@@ -1,7 +1,10 @@
 <?php
 
+use App\Traits\OtpTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\ContactController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -463,5 +466,8 @@ Route::get('/privacy-policy',function(){
 });
 
 
-
+Route::get('/getEmail', [OtpController::class, 'getEmail'])->name('getEmail');
+Route::post('/sendEmail', [OtpController::class, 'sendEmail'])->name('sendEmail');
+Route::get('/otpSubmitPage', [OtpController::class, 'showOtpSubmitPage'])->name('otpSubmitPage');
+Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('verify.otp');
 

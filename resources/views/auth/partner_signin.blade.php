@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('content')
+@section('content') 
+    {{-- @dd($errors->any) --}}
     <main style="margin-top: -40px; background-image: url({{asset('site/img/login.jpg')}});">
         <!-- Background image -->
         <div class="container rejester-form" >
@@ -10,7 +11,7 @@
                             <form class=" shadow-3-strong p-3" method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}">
                                 @csrf
                                 <!-- Email input -->
-                                <h3 class="card-title text-center mb-5">Partner Login</h3>
+                                <input type="hidden" name="formName" value="partnerLogin">
                                 <div class="form-outline mb-3">
                                     <input id="name" type="text" name="email" value="" placeholder="Username" required class="form-control" />
                                     <label class="form-label" for="form1Example1">Email address</label>
@@ -30,8 +31,11 @@
                                     <a href="#!">Forgot password?</a>
                                     <div class="col text-center">
                                     </div>
-                                    <div class="col d-flex justify-content-center">
+                                    {{-- <div class="col d-flex justify-content-center">
                                         Not a member?&nbsp; <a href="{{route('agent.create')}}">SignUp </a>
+                                    </div> --}}
+                                    <div class="col d-flex justify-content-center">
+                                        Not a member?&nbsp; <a href="{{route('getEmail')}}">SignUp </a>
                                     </div>
                                     <!-- Submit button -->
                                 </div>
