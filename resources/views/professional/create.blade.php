@@ -4,7 +4,7 @@
 <div class="container py-5" style="margin-top:55px">
     <div class="row">
         <div class="col-md-10 mx-auto">
-                <h2 style="text-align: center;">Job Seeker Registration</h2><hr>
+                <h2 style="text-align: center;"></h2><hr>
                     <form method="POST" action="{{ route('ProfessionalPersonnel.store') }}" aria-label="{{ __('Register') }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="role" value="professional">
@@ -119,10 +119,10 @@
                                     </span>
                                 @endif
                             </div>
-                         
+                        
                             <div class="col-sm-3">
                                 <label for="email">{{ __('Email Address ') }}<span class="text-danger">*</span></label>
-                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" placeholder="Email Address" required>
+                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email',  $otpVerified_Email) }}" placeholder="Email Address" required>
                                 @if ($errors->has('email'))
                                     <span class="invalid-feedback" role="alert" style="margin-top: 29px; margin-right: 15px;">
                                         <strong>{{ $errors->first('email') }}</strong>

@@ -32,6 +32,8 @@ class LoginController extends Controller
      */
     //protected $redirectTo = '/';
     public function redirectTo(){
+
+        // dd(Auth::user()->hasRole('superadministrator'));
         if(Auth::user()->hasRole(['superadministrator', 'administrator','cadmin','sub-agent'])){
             if(Auth::user()->status == 1){
                 return '/admin';
@@ -61,7 +63,7 @@ class LoginController extends Controller
             }
         }
         elseif(Auth::user()->hasRole('professional')){
-            if(Auth::user()->status == 0){
+            if(Auth::user()->status == 0 || Auth::user()->status == 1){
                 return route('professional.index');
             }elseif(Auth::user()->status == 2){
                 \Session::flush();
@@ -86,6 +88,7 @@ class LoginController extends Controller
 
     protected function credentials(Request $request)
     {
+        // dd($request);
         // return $request->only($this->username(), 'password');
         return ['email'=>$request->{$this->username()},'password'=>$request->password]; 
     }

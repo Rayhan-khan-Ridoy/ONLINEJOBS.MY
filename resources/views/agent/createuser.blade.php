@@ -1,6 +1,17 @@
 @extends('employer.app')
 
 @section('content')
+{{-- @dd($errors->has('image')) --}}
+
+{{-- @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li class="text-danger text-center">{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif --}}
 
     <!----------Start Multi Step Form Design---------->
     <div class="tab-banner">
@@ -193,7 +204,7 @@
                                 <!-- Country Dropdown -->
                                 <div class="col-sm-6" id="com_country">
                                     <label for="company_country">Country</label><span class="text-danger"> *</span>
-                                    <select name="company_country" id="company_country" required class="form-control">
+                                    <select name="company_country" id="company_country2" required class="form-control">
                                         <option value="" disable="true" selected="true">- - - - - - -- - - -- - - - - - - - - - - Select Country - - - -- - - -- - - - - - - - - - - - - - - - -</option>
                                         @foreach ($nationalitys as $key => $country)
                                             <option value="{{ $country->id }}"
@@ -202,13 +213,14 @@
                                             </option>
                                         @endforeach
                                     </select>
+
                                     <small id="company_countryError" style="visibility:hidden;color:red">Country is mandatory</small>
                                 </div>
                             
                                 <!-- State Dropdown -->
                                 <div class="col-sm-3" id="com_state">
                                     <label for="company_state">State/Province/Division</label><span class="text-danger"> *</span>
-                                    <select name="company_state" id="company_state" required class="form-control">
+                                    <select name="company_state" id="company_state2" required class="form-control">
                                         <option value="" disable="true" selected="true">- - - - - - - - - Select State - - - - - - - - - - - - - - - - -</option>
                                     </select>
                                     <small id="company_stateError" style="visibility:hidden;color:red">State is mandatory</small>
@@ -217,11 +229,12 @@
                                 <!-- City Dropdown -->
                                 <div class="col-sm-3" id="com_city">
                                     <label for="company_city">City</label><span class="text-danger"> *</span>
-                                    <select name="company_city" id="company_city" required class="form-control">
+                                    <select name="company_city" id="company_city2" required class="form-control">
                                         <option value="" disable="true" selected="true"> - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>
                                     </select>
                                     <small id="company_cityError" style="visibility:hidden;color:red">City is mandatory</small>
                                 </div>
+                                
                             </div>
                             <hr>
                             <div class="form-group row">
@@ -449,11 +462,14 @@
                                                         is mandatory</small>
                                                     <small id="imageError2" style="visibility:hidden;color:red">Select
                                                         file is not Image file</small>
-                                                    <!-- @if ($errors->has('image'))
-    <span class="invalid-feedback" role="alert">
+                                                    @error('image')
+                                                    <div class="text-danger text-sm">{{ $message }}</div>
+                                                    @enderror
+                                                {{-- @if ($errors->has('image'))
+                                                                <span class="invalid-feedback" role="alert">
                                                                     <strong>{{ $errors->first('image') }}</strong>
                                                                 </span>
-    @endif -->
+                                                @endif --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -475,13 +491,20 @@
                                                         size: 1MB</p>
                                                     <img id="full_image_preview" style="width: 100px;" src=""
                                                         class="img-thumbnail" height="">
-                                                    <small id="full_imageError" style="visibility:hidden;color:red">Select
+                                                    <small id="full_imageError" style="visibility:hidden;color:red">Full Image
+                                                        is mandatory</small>
+                                                    <small id="full_imageError2" style="visibility:hidden;color:red">Select
                                                         file is not Image file</small>
-                                                    @if ($errors->has('full_image'))
+
+                                                    @error('full_image')
+                                                    <div class="text-danger text-sm">{{ $message }}</div>
+                                                    @enderror
+
+                                                    {{-- @if ($errors->has('full_image'))
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $errors->first('full_image') }}</strong>
                                                         </span>
-                                                    @endif
+                                                    @endif --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -634,7 +657,7 @@
                                         @endif
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="passport_file">{{ __('Passport Copy ') }}</label><span
+                                        <label for="passport_file">{{ __('Passport Copy | PDF ') }}</label><span
                                             class="text-danger"> *</span>
                                         <div class="upload-area">
                                             <button type="button" class="upload-btn"><span
@@ -653,11 +676,15 @@
                                                 Copy is mandatory</small>
                                             <small id="passport_fileError2" style="visibility:hidden;color:red">Select pdf
                                                 file only</small>
-                                            @if ($errors->has('passport_file'))
+
+                                            @error('passport_file')
+                                            <div class="text-danger text-sm">{{ $message }}</div>
+                                            @enderror
+                                            {{-- @if ($errors->has('passport_file'))
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $errors->first('passport_file') }}</strong>
                                                 </span>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
                                 </div>
@@ -670,10 +697,10 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6">
-                                        <label for="medical_certificate">{{ __('Medical Certificate') }}</label>
+                                        <label for="medical_certificate">{{ __('Medical Certificate | PDF ') }}</label>
                                         <div class="upload-area">
                                             <button type="button" class="upload-btn"><span
-                                                    ng-bind="uploader.status.fileName">Upload Photo</span></button>
+                                                    ng-bind="uploader.status.fileName">Upload File</span></button>
                                             <span class="uploadfiles">
                                                 <input
                                                     onchange="previewFile('#medical_certificate_preview','#medical_certificate')"
@@ -687,19 +714,23 @@
                                                 class="img-thumbnail" height="">
                                             <small id="medical_certificateError"
                                                 style="visibility:hidden;color:red">Select pdf file only</small>
-                                            @if ($errors->has('medical_certificate'))
+
+                                            @error('medical_certificate')
+                                            <div class="text-danger text-sm">{{ $message }}</div>
+                                            @enderror
+                                            {{-- @if ($errors->has('medical_certificate'))
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $errors->first('medical_certificate') }}</strong>
                                                 </span>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <label
-                                            for="immigration_security_clearence">{{ __('Immigration Security Clearence') }}</label>
+                                            for="immigration_security_clearence">{{ __('Immigration Security Clearence | PDF ') }}</label>
                                         <div class="upload-area">
                                             <button type="button" class="upload-btn"><span
-                                                    ng-bind="uploader.status.fileName">Upload Photo</span></button>
+                                                    ng-bind="uploader.status.fileName">Upload File</span></button>
                                             <span class="uploadfiles">
                                                 <input
                                                     onchange="previewFile('#immigration_security_clearence_preview','#immigration_security_clearence')"
@@ -714,11 +745,15 @@
                                                 src="" class="img-thumbnail" height="">
                                             <small id="immigration_security_clearenceError"
                                                 style="visibility:hidden;color:red">Select pdf file only</small>
-                                            @if ($errors->has('immigration_security_clearence'))
+
+                                            @error('immigration_security_clearence')
+                                            <div class="text-danger text-sm">{{ $message }}</div>
+                                            @enderror
+                                            {{-- @if ($errors->has('immigration_security_clearence'))
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $errors->first('immigration_security_clearence') }}</strong>
                                                 </span>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
                                 </div>
@@ -1211,9 +1246,9 @@
             const dobValue = document.getElementById('date_of_birth').value.trim();
             const phoneValue = document.getElementById('phone').value.trim();
             const genderValue = document.getElementById('gender').value.trim();
-            const company_countryValue = document.getElementById('company_country').value.trim();
-            const company_stateValue = document.getElementById('company_state').value.trim();
-            const company_cityValue = document.getElementById('company_city').value.trim();
+            const company_countryValue = document.getElementById('company_country2').value.trim();
+            const company_stateValue = document.getElementById('company_state2').value.trim();
+            const company_cityValue = document.getElementById('company_city2').value.trim();
             const imageValue = document.getElementById('image').value.trim();
             const fullimageValue = document.getElementById('full_image').value.trim();
             const addressValue = document.getElementById('address').value.trim();
@@ -1246,11 +1281,7 @@
             var result = validExt.includes(image_ext);
             var fullImageresult = validExt.includes(fullimage_ext);
 
-            // if(imageValue!='')
-            // {
-            //     var image_ext=imageValue.substring(imageValue.lastIndexOf('.')+1);
-            //     console.log(image_ext);
-            // }
+           
 
 
 
@@ -1270,7 +1301,7 @@
                 document.getElementById("gender").style.borderColor = "red";
             } else if (company_countryValue === '') {
                 document.getElementById("company_countryError").style.visibility = "visible";
-                document.getElementById("company_country").style.borderColor = "red";
+                document.getElementById("company_country2").style.borderColor = "red";
             } else if (company_stateValue === '') {
                 document.getElementById("company_stateError").style.visibility = "visible";
                 document.getElementById("company_state").style.borderColor = "red";
@@ -1285,15 +1316,17 @@
                 document.getElementById("nationalityError").style.visibility = "visible";
                 document.getElementById("nationality").style.borderColor = "red";
             } else if (imageValue === '') {
+                console.log('img still empty');
                 document.getElementById("imageError").style.visibility = "visible";
                 document.getElementById("image").style.borderColor = "red";
             } else if (result == false) {
                 document.getElementById("imageError2").style.visibility = "visible";
             }
-            // else if(fullImageresult==false)
-            // {
-            //     document.getElementById("full_imageError").style.visibility = "visible";
-            // }
+            
+            else if(fullImageresult==false)
+            {
+                document.getElementById("full_imageError").style.visibility = "visible";
+            }
             else if (emergency_contact_nameValue === '') {
                 document.getElementById("emergency_contact_nameError").style.visibility = "visible";
                 document.getElementById("emergency_contact_name").style.borderColor = "red";
@@ -1324,14 +1357,14 @@
             } else if (passportFileResult == false) {
                 document.getElementById("passport_fileError2").style.visibility = "visible";
             }
-            // else if(medical_certificateFileResult==false)
-            // {
-            //     document.getElementById("medical_certificateError").style.visibility = "visible";
-            // }
-            // else if(immigration_security_clearenceFileResult==false)
-            // {
-            //     document.getElementById("immigration_security_clearenceError").style.visibility = "visible";
-            // }
+            else if(medical_certificateFileResult==false)
+            {
+                document.getElementById("medical_certificateError").style.visibility = "visible";
+            }
+            else if(immigration_security_clearenceFileResult==false)
+            {
+                document.getElementById("immigration_security_clearenceError").style.visibility = "visible";
+            }
             else {
                 console.log('Successfully we are going to save data - Rayhan');
                 // console.log(nameValue); await;
@@ -1355,27 +1388,27 @@
             }
         }
 
-        function validateForm() {
-            // This function deals with validation of the form fields
-            var x, y, i, valid = true;
-            x = document.getElementsByClassName("tab");
-            y = x[currentTab].getElementsByTagName("input");
-            // A loop that checks every input field in the current tab:
-            for (i = 0; i < y.length; i++) {
-                // If a field is empty...
-                if (y[i].value == "") {
-                    // add an "invalid" class to the field:
-                    y[i].className += " invalid";
-                    // and set the current valid status to false
-                    valid = false;
-                }
-            }
-            // If the valid status is true, mark the step as finished and valid:
-            if (valid) {
-                document.getElementsByClassName("step")[currentTab].className += " finish";
-            }
-            return valid; // return the valid status
-        }
+        //  function validateForm() {
+        //     // This function deals with validation of the form fields
+        //     var x, y, i, valid = true;
+        //     x = document.getElementsByClassName("tab");
+        //     y = x[currentTab].getElementsByTagName("input");
+        //     // A loop that checks every input field in the current tab:
+        //     for (i = 0; i < y.length; i++) {
+        //         // If a field is empty...
+        //         if (y[i].value == "") {
+        //             // add an "invalid" class to the field:
+        //             y[i].className += " invalid";
+        //             // and set the current valid status to false
+        //             valid = false;
+        //         }
+        //     }
+        //     // If the valid status is true, mark the step as finished and valid:
+        //     if (valid) {
+        //         document.getElementsByClassName("step")[currentTab].className += " finish";
+        //     }
+        //     return valid; // return the valid status
+        // }
 
         function fixStepIndicator(n) {
             // This function removes the "active" class of all steps...
@@ -1607,81 +1640,88 @@
     </script>
 
 <!--below code newly added by Rayhan khan Rayhan for making country,states & cities dynamic - 15-1-2025-->
+
 <script>
     $(document).ready(function () {
-        // Fetch states based on selected country
-        $('#company_country').change(function () {
-            let countryId = $(this).val();
-            // let countryName = $('#company_contry option:selected').text();
+        
+        let oldStateValue = "{{ old('company_state') }}";
+        let oldCityValue = "{{ old('company_city') }}";
+        let oldCountryValue = "{{ old('company_country') }}";
 
-            // console.log(countryName);
-            let stateDropdown = $('#company_state');
-            let cityDropdown = $('#company_city');
+        // Trigger country change on page load to preselect old values
+        if (oldCountryValue) {
+            $('#company_country2').val(oldCountryValue).trigger('change');
+        }
 
-            // Clear previous options
-            stateDropdown.empty().append('<option value="" disable="true" selected="true">- - - - - - - - - - - - - - Select State - - - - - - - - - - - - - - - - -</option>');
-            cityDropdown.empty().append('<option value="" disable="true" selected="true">- - - - - - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>');
+        // Country → Load States
+        $('#company_country2').on('change', function () {
+            const countryId = $(this).val();
+            const $state = $('#company_state2');
+            const $city = $('#company_city2');
+
+            $state.html('<option value="" disabled selected>- - - - - - - - - - - - - - Select State - - - - - - - - - - - - - - - - -</option>');
+            $city.html('<option value="" disabled selected>- - - - - - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>');
 
             if (countryId) {
-                try {
-                    $.ajax({
-                        url: `/api/get-states/${countryId}`,
-                        type: 'GET',
-                        success: function (data) {
-                            if (data.length > 0) {
-                                data.forEach(function (state) {
-                                    stateDropdown.append(`<option value="${state.id}">${state.name}</option>`);
-                                });
-                            } else {
-                                stateDropdown.append('<option value="" disable="true">No states found</option>');
+                $.ajax({
+                    url: `/api/get-states/${countryId}`,
+                    type: 'GET',
+                    success: function (data) {
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(function (state) {
+                                $state.append(`<option value="${state.id}">${state.name}</option>`);
+                            });
+                            if (oldStateValue) {
+                                $state.val(oldStateValue).trigger('change');
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error('Error fetching states:', textStatus, errorThrown);
-                            alert('Failed to fetch states. No states are available for this country. Please try again later.');
-                        },
-                    });
-                } catch (error) {
-                    console.error('AJAX error', error);
-                    alert('An error occurred while fetching states. Please try again later.');
-                }
+                        } else {
+                            $state.append('<option value="" disabled>No states found</option>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching states:', status, error);
+                        alert('Failed to fetch states. Please try again later.');
+                    }
+                });
             }
         });
 
-        // Fetch cities based on selected state
-        $('#company_state').change(function () {
-            let stateId = $(this).val();
-            let cityDropdown = $('#company_city');
+        // State → Load Cities
+        $('#company_state2').on('change', function () {
+            const stateId = $(this).val();
+            const $city = $('#company_city2');
 
-            // Clear previous options
-            cityDropdown.empty().append('<option value="" disable="true" selected="true">- - - - - - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>');
+            $city.html('<option value="" disabled selected>- - - - - - - - - - - - - - Select City - - - - - - - - - - - - - - - - -</option>');
 
             if (stateId) {
-                try {
-                    $.ajax({
-                        url: `/api/get-cities/${stateId}`,
-                        type: 'GET',
-                        success: function (data) {
-                            if (data.length > 0) {
-                                data.forEach(function (city) {
-                                    cityDropdown.append(`<option value="${city.id}">${city.name}</option>`);
-                                });
-                            } else {
-                                cityDropdown.append('<option value="" disable="true">No cities found</option>');
+                $.ajax({
+                    url: `/api/get-cities/${stateId}`,
+                    type: 'GET',
+                    success: function (data) {
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(function (city) {
+                                $city.append(`<option value="${city.id}">${city.name}</option>`);
+                            });
+                            if (oldCityValue) {
+                                setTimeout(() => {
+                                    $city.val(oldCityValue);
+                                }, 100);
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error('Error fetching cities:', textStatus, errorThrown);
-                            alert('Failed to fetch city. No cities are available for this country. Please try again later.');
-                        },
-                    });
-                } catch (error) {
-                    console.error('AJAX error', error);
-                    alert('An error occurred while fetching cities. Please try again later.');
-                }
+                        } else {
+                            $city.append('<option value="" disabled>No cities found</option>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching cities:', status, error);
+                        alert('Failed to fetch cities. Please try again later.');
+                    }
+                });
             }
         });
     });
 </script>
+
+
+
 
 @endsection

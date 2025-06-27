@@ -3,35 +3,36 @@
 namespace App\Http\Controllers;
 // namespace App\Http\Controllers\Auth;
 
-use Session;
-use Storage;
-use App\User;
-use App\Skill;
-use App\Gender;
-use App\Sector;
-use App\Country;
-use App\State;
-use App\UserProfile;
-use App\Profile;
-use App\Language;
-use App\Religion;
-use App\Education;
-use App\Experience;
-use App\SkillLevel;
 use App\AgentProfile;
-use App\MaritalStatus;
+use App\Country;
+use App\Education;
 use App\EducationLevel;
+use App\Experience;
+use App\Gender;
+use App\Language;
+use App\MaritalStatus;
+use App\Notifications\AgentApplication;
+use App\Notifications\AgentDataUpdate;
+use App\Notifications\MaidWorkerEntry;
+use App\Notifications\SendPasswordAfterRegistration;
+use App\Profile;
+use App\Religion;
+use App\Sector;
+use App\Skill;
+use App\SkillLevel;
+use App\State;
+use App\User;
+use App\UserProfile;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Notifications\SendPasswordAfterRegistration;
-use App\Notifications\AgentDataUpdate;
-use App\Notifications\MaidWorkerEntry;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\AgentApplication;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Validator;
 use Image; /* https://github.com/Intervention/image */
+use Session;
+use Storage;
 
 class AgentProfileController extends Controller
 {
@@ -165,24 +166,24 @@ class AgentProfileController extends Controller
             $agent->agency_registered_name = $request->first_name.' '.$request->last_name;
             $agent->agency_registration_no =$request->passport ?? '';
             $agent->license_no=$request->passport ?? '';
-            $agent->agency_country=$request->per_country;
-            $agent->agency_state=$request->per_state;
-            $agent->agency_city=$request->per_city;
+            $agent->agency_country=$request->per_country ?? '';
+            $agent->agency_state=$request->per_state ?? '';
+            $agent->agency_city=$request->per_city ?? '';
             $agent->agency_address=$request->per_address ?? '';
-            $agent->agency_phone =$request->contact_phone;
-            $agent->agency_email=$request->per_email;
-            $agent->first_name=$request->first_name;
+            $agent->agency_phone =$request->contact_phone ?? '';
+            $agent->agency_email=$request->per_email ?? '';
+            $agent->first_name=$request->first_name ?? '';
             $agent->last_name=$request->last_name ?? '';
-            $agent->contact_phone=$request->contact_phone;
-            $agent->contact_phone2=$request->contact_phone2;
-            $agent->nic=$request->passport;
-            $agent->contact_email=$request->per_email;
-            $agent->address=$request->per_address;
+            $agent->contact_phone=$request->contact_phone ?? '';
+            $agent->contact_phone2=$request->contact_phone2 ?? '';
+            $agent->nic=$request->passport ?? '';
+            $agent->contact_email=$request->per_email ?? '';
+            $agent->address=$request->per_address ?? '';
             
 
             $agent->save();
         }
-        Notification::send($user, new SendPasswordAfterRegistration($password));
+        Notification::send($user, new SendPasswordAfterRegistration($password,$request->email));
         $admins = User::whereRoleIs('superadministrator')->get();
         Notification::send($admins, new AgentApplication($agent));
         return redirect('admin.agent.index');
@@ -376,87 +377,72 @@ class AgentProfileController extends Controller
                                 ->where('country_id',$country_id)
                                 ->get();
             // return $states;
-            return view('agent.createuser', compact('religions','nationalitys','languages','skill_levels','marital_statuses','genders','skills','education_levels','sectors','countrys','states'));
+            return view('agent.createuser2', compact('religions','nationalitys','languages','skill_levels','marital_statuses','genders','skills','education_levels','sectors','countrys','states'));
         }
     }
 
     public function saveuser( Request $request)
     {
-        /*Validation*/
-        // $request=$this->validate($request, [
-        //     // 'name' => 'required',
-        //     'address' => 'required',
-        //     'company_city' => 'required',
-        //     'company_state' => 'required',
-        //     'nationality'   => 'required',
-        //     'gender'  =>  'required',
-        //     'phone' =>  'required',
-        //     'image' =>  'required',
-        //     'emergency_contact_name' => 'required',
-        //     'emergency_contact_relationship' => 'required',
-        //     'emergency_contact_phone'  =>   'required',
-        //     'emergency_contact_address' =>  'required',
-        //     'passport_number' =>  'required',
-        //     'passport_issue_place'=>'required',
-        //     'passport_issue_date'  =>'required',
-        //     'passport_expire_date'  =>'required',
-        //     'passport_file' =>'required',
-        //     'date_of_birth' => 'date',
-        //     'passport_issue_date' => 'date',
-        //     'passport_expire_date' => 'date',
-        // ]);
-       
-        // if($request->file('image')){
-        //     $this->validate($request, [
-        //         'image' => 'required|max:1024',
-        //     ]);
-        // }
-        // if($request->file('full_image')){
-        //     $this->validate($request, [
-        //         'full_image' => 'max:1024',
-        //     ]);
-        // }
-        // if($request->file('passport_file')){
-        //     $this->validate($request, [
-        //         'passport_file' => 'max:1024',
-        //     ]);
-        // }
-        // if($request->file('medical_certificate')){
-        //     $this->validate($request, [
-        //         'medical_certificate' => 'max:1024',
-        //     ]);
-        // }
-        // if($request->file('immigration_security_clearence')){
-        //     $this->validate($request, [
-        //         'immigration_security_clearence' => "max:1024"
-        //     ]);
-        // }
- 
+      
+        //  dd($request->all());
           // Validation Rules
         $rules = [
-            'address' => 'required',
-            'company_city' => 'required',
-            'company_state' => 'required',
-            'nationality' => 'required',
-            'gender' => 'required',
-            'phone' => 'required',
-            'image' => 'required|image|max:1024',
-            'emergency_contact_name' => 'required',
-            'emergency_contact_relationship' => 'required',
-            'emergency_contact_phone' => 'required',
-            'emergency_contact_address' => 'required',
-            'passport_number' => 'required',
-            'passport_issue_place' => 'required',
-            'passport_issue_date' => 'required|date',
-            'passport_expire_date' => 'required|date',
-            'passport_file' => 'required|file|max:1024',
-            'date_of_birth' => 'nullable|date',
-            'full_image' => 'nullable|image|max:1024',
-            'medical_certificate' => 'nullable|file|max:1024',
-            'immigration_security_clearence' => 'nullable|file|max:1024',
+        'address' => 'required',
+        'company_city' => 'required',
+        'company_state' => 'required',
+        'nationality' => 'required',
+        'gender' => 'required',
+        'phone' => 'required',
+        'image' => 'required|mimes:jpeg,png,jpg|max:1024',
+        'emergency_contact_name' => 'required',
+        'emergency_contact_relationship' => 'required',
+        'emergency_contact_phone' => 'required',
+        'emergency_contact_address' => 'required',
+        'passport_number' => 'required',
+        'passport_issue_place' => 'required',
+        'passport_issue_date' => 'required|date',
+        'passport_expire_date' => 'required|date',
+        'passport_file' => 'required|file|mimes:pdf|max:1024',
+        'date_of_birth' => 'nullable|date',
+        'full_image' => 'nullable|mimes:jpeg,png,jpg|max:1024',
+        'medical_certificate' => 'nullable|file|mimes:pdf|max:1024',
+        'immigration_security_clearence' => 'nullable|file|mimes:pdf|max:1024',
         ];
 
-        $this->validate($request, $rules);
+        $messages=[
+            'image.max' => 'The Half image may not be greater than 1 MB.',
+            'full_image.max' => 'The Full image may not be greater than 1 MB.',
+            'passport_file.max' => 'The Passport copy may not be greater than 1 MB.',
+            'medical_certificate.max' => 'The Medical certificate may not be greater than 1 MB.',
+            'immigration_security_clearence.max' => 'The Immigration security clearence may not be greater than 1 MB.',
+            
+        ];
+
+        // $val = $this->validate($request, $rules);
+        // dd($val);
+
+        // Validate the request
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            // Debugging: Dump all errors
+            // dd($errors->all());
+            // Redirect back with validation errors and old input
+            return redirect()->back()
+                                ->withErrors($validator)  // Passes validation errors
+                                ->withInput();            // Retains old input values
+
+
+            // You can return the errors as JSON, or redirect back with errors
+            // return response()->json([
+            //     'status' => 'error',
+            //     'errors' => $errors->all(),
+            // ]);
+        }
+
+    
 
         $user = new User;
         $user->name = $request->name;

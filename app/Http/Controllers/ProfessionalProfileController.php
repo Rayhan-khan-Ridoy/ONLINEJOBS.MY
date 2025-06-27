@@ -40,7 +40,10 @@ class ProfessionalProfileController extends Controller
 
     public function profile()
     {
-        $user = Auth::user();
+         $user = Auth::user();
+        
+        // $user = ProfessionalProfile::where('user_id',Auth::user()->id)->firstOrFail();
+// dd($user);
         $totalExperience = $this->calculateTotalYearsOfExperience($user);
 
         // dd($totalExperience);
@@ -52,10 +55,11 @@ class ProfessionalProfileController extends Controller
 
     public function calculateTotalYearsOfExperience($user)
     {
-        if($user==''){
+        if(empty($user)){
             return 0;
         }
-        if($user->professional_experiences->count() > 0){
+        if (!empty($user->professional_experiences) && $user->professional_experiences->count() > 0) {
+
 
             foreach($user->professional_experiences as $experience){
 
@@ -83,13 +87,15 @@ class ProfessionalProfileController extends Controller
      */
     public function create()
     {
+        $otpVerified_Email=session('requestEmail'); //FROM OTP SENDING EMAIL AND IF THAT EMAIL IS VERIFIED
+        // dd($requestEmail);
         $countrys = Country::where('status', 1)->get();
         
         $options= Option::where([
             ['status','=','1'],
             ['type','=','Position Name'],
         ])->get();
-        return view('professional.create', compact('countrys','options'));
+        return view('professional.create', compact('countrys','options','otpVerified_Email'));
     }
 
     /**
@@ -100,6 +106,7 @@ class ProfessionalProfileController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'email' => 'required|string|email|max:255|unique:users',
             'name'  => 'required',
@@ -116,6 +123,12 @@ class ProfessionalProfileController extends Controller
                 'resume_file' => 'mimes:pdf,doc,docx|max:1024',
             ]);
         }
+
+        //forget request email of get otp email page
+        if(session('requestEmail')){
+            session()->forget('requestEmail');
+        }
+
         // Create use
         $user = new User;
         $user->name = $request->name;

@@ -96,7 +96,7 @@
                     </div>
                     <div class="col-sm-3" id="a_state">
                         <label for="country">{{ __('State ') }}<span class="text-danger">*</span></label>
-                        <select required name="agency_state" id="company_state" class="form-control{{ $errors->has('agency_state') ? ' is-invalid' : '' }}" >
+                        <select name="agency_state" id="company_state" class="form-control{{ $errors->has('agency_state') ? ' is-invalid' : '' }}" >
                             <option value="" disable="true" selected="true">-- Select State--</option>
                         </select>
                         @if ($errors->has('agency_state'))
@@ -107,7 +107,7 @@
                     </div>
                     <div class="col-sm-3" id="a_city">
                         <label for="country">{{ __('City ') }}<span class="text-danger">*</span></label>
-                        <select required name="agency_city" id="company_city"  class="form-control{{ $errors->has('agency_city') ? ' is-invalid' : '' }}" >
+                        <select name="agency_city" id="company_city"  class="form-control{{ $errors->has('agency_city') ? ' is-invalid' : '' }}" >
                             <option value="" disable="true" selected="true">--Select City--</option>
                         </select>
                         @if ($errors->has('agency_city'))
@@ -298,7 +298,7 @@
            document.getElementById('license_no').value !== '' &&
            document.getElementById('company_country').value !== '' &&
            document.getElementById('company_state').value !== '' &&
-           document.getElementById('company_city').value !== '' &&
+           document.getElementById('company_city').value !== '' && 
            document.getElementById('agency_phone').value !== '' &&
            document.getElementById('agency_email').value !== '' &&
 

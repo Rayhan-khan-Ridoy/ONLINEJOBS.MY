@@ -1,4 +1,7 @@
-@extends('layouts.app')
+
+@extends($layout)
+
+
 @section('content')
 {{-- <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" /> --}}
 <div class="container py-5" style="margin-top:55px">
@@ -16,7 +19,7 @@
             </div>
         </div>
     </form>
-    <div class="row">
+    <div class="row pt-5">
         <table class="table table-bordered">
             <thead >
               <tr style="background-color: #157efb; color:white">
@@ -30,6 +33,7 @@
               </tr>
             </thead>
             <tbody>
+                
                 @if(!$jobs->isEmpty())
                 <?php $count = ($jobs->currentpage()-1)*$jobs->perpage()+1; ?>
                     @foreach ($jobs as $list )
@@ -43,12 +47,12 @@
                             <td>
                                 <a type="button" class="btn btn-primary btn-sm" href="{{route('recent.job.details',$list->j_id)}}">View Details</a>|
                                 @guest
-                                <a href="{{route('login')}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a>
+                                    <a href="{{route('login')}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a>
                                 @endguest
                                 @auth
-                                @if(Auth::user()->hasRole('professional'))
-                                <a href="{{route('applyOnline',$jobs_details->job_id)}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a>
-                                @endif
+                                    @if(Auth::user()->hasRole('professional'))
+                                        <a href="{{route('applyOnline',$list->j_id)}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a>
+                                    @endif
                                 @endauth
                             </td>
                         </tr>
@@ -56,7 +60,7 @@
                 @endif
             </tbody>
           </table>
-          <div class="pagination">
+          <div class=" d-flex justify-content-start">
             {{ $jobs->links()}}
         </div>
     </div>

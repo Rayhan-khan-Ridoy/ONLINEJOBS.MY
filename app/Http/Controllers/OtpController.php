@@ -23,6 +23,8 @@ class OtpController extends Controller
 
     public function sendEmail(Request $request)
     {
+        session(['requestEmail'=>$request->email]);
+
         $this->processOtpSending($request->email);
         session()->flash('success','OTP sent successfully!');
         return redirect('/otpSubmitPage');
@@ -48,8 +50,8 @@ class OtpController extends Controller
 
             // Check and redirect
             $previousUrl = session('previousUrl'); // ✅ Store the previous url to determine which login page (employer, partner, jobseeker, etc.) the request originated from
-            session()->forget('previousUrl');   // ❌ now it's safe to forget
         
+
             if ($previousUrl == '/employer/login') {
                 return redirect('/employer/create');
             } elseif ($previousUrl == '/login') {
@@ -61,6 +63,7 @@ class OtpController extends Controller
             }
 
         }else {
+            session()->forget('previousUrl'); 
             session(['otp_verified' => false]);
             return redirect()->route('getEmail')->with('error', 'Invalid OTP');
         }

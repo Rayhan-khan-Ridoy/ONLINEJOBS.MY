@@ -10,8 +10,9 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-1">
-                            @if($user!='')
-                            <!-- <img class="rounded-circle" style="width: 75px; height:75px;" src="{{$user->professional_profile->profile_image != '' ? asset('storage/resume/'.$user->professional_profile->profile_image) :  asset('images/dummy.jpg')}}"> -->
+                            @if(!empty($user))
+                            {{-- @dd($user) --}}
+                           {{-- <img class="rounded-circle" style="width: 75px; height:75px;" src="{{$user->professional_profile->profile_image != '' ? asset('storage/resume/'.$user->professional_profile->profile_image) :  asset('images/dummy.jpg')}}"> --> --}}
                             @endif
                         </div>
                         <div class="col-md-8">
