@@ -429,6 +429,8 @@ Route::group(['prefix' => 'parttime-employer-profile-dashboard','middleware' => 
 
 //home page
 Route::get('/recent-jobs', 'HomeController@recentJobs')->name('recent.job');
+Route::get('/appliedJobs', 'HomeController@appliedJobs')->name('appliedJobs')->middleware('auth');
+
 Route::get('/recent-jobs-details/{id}', 'HomeController@recentJobsDetails')->name('recent.job.details');
 Route::get('/autocomplete/fetch', 'HomeController@autocomplete')->name('autocomplete.fetch');
 Route::get("/about-us", function(){

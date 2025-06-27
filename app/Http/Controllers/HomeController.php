@@ -7,6 +7,7 @@ use App\User;
 use App\Skill;
 use App\Gender;
 use App\Country;
+use App\JobApplicant;
 use App\Language;
 use App\Religion;
 use Carbon\Carbon;
@@ -262,6 +263,24 @@ class HomeController extends Controller
         }
     }
 
+    public function appliedJobs()
+    {
+
+        $layout = (Auth::user()->hasRole('professional'))
+            ? 'employer.app'
+            : 'layouts.app';
+
+        $appliedJobs = Job::with(['jobApplicants', 'company', 'job_seeker_job_category_data'])
+            ->whereHas('jobApplicants', function ($query) {
+                $query->where('user_id', auth()->user()->id);
+            })
+            ->paginate(10);
+
+
+        return view('job.appliedJobs', compact('appliedJobs', 'layout'));
+    }
+
+
     public function recentJobs(Request $request)
     {
 
@@ -278,24 +297,21 @@ class HomeController extends Controller
         } else {
             $jobs = Job::recentJobs();
         }
-        
-        return view('job.recent_jobs', compact('jobs','layout'));
+
+        return view('job.recent_jobs', compact('jobs', 'layout'));
     }
 
     public function recentJobsDetails($id)
     {
-         $layout = (Auth::user()->hasRole('professional'))
+        $layout = (Auth::user()->hasRole('professional'))
             ? 'employer.app'
             : 'layouts.app';
 
 
         $jobs_details = Job::recentJobsDetails($id);
-        // dd($jobs_details);
-        return view('job.recent_jobs_details', compact('jobs_details','layout'));
-    }
+        $IsApplied = JobApplicant::where('job_id', $id)->where('user_id', auth()->id())->where('applied_by_jobseeker', 1)->exists();
 
-    // public function recentJobsDetails($id){
-    //     $jobs_details = Job::recentJobsDetails($id);
-    //     return view('job.recent_jobs_details',compact('jobs_details'));
-    // }
+        // dd($IsApplied);
+        return view('job.recent_jobs_details', compact('jobs_details', 'layout', 'IsApplied'));
+    }
 }

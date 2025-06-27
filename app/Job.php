@@ -19,18 +19,23 @@ class Job extends Model
     }
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id','id');
     }
+ 
 
     public function academics()
     {
         return $this->hasMany(JobAcademic::class);
     }
 
-    public function company()
-    {
-        return EmployerProfile::where('user_id', $this->user_id)->first();
-    }
+    // public function company()
+    // {
+    //     return EmployerProfile::where('user_id', $this->user_id)->first();
+    // }
+public function company()
+{
+    return $this->hasOne(EmployerProfile::class, 'user_id', 'user_id');
+}
 
     public function jobApplicants()
     {

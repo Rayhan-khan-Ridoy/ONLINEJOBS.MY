@@ -305,7 +305,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container">
-            <a class="navbar-brand" href="{{route('home')}}"> <img src="{{asset('site/img/onlinelogo.png')}}"
+            <a class="navbar-brand" href=""> <img src="{{asset('site/img/onlinelogo.png')}}"
                     class="img-fluid" style="width:212px"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -346,7 +346,7 @@
                                     <a class="nav-link" href="{{route('recent.job')}}"> View Recent Jobs </a> 
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#"> Applied Jobs </a> 
+                                    <a class="nav-link" href="{{route('appliedJobs')}}"> Applied Jobs </a> 
                                 </li >
                                                 
                             @endif

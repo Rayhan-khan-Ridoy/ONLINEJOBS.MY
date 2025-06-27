@@ -45,15 +45,20 @@
                             <td>{{$list->closing_date}}</td>
                             <td>{{$list->related_experience_year}}</td>
                             <td>
-                                <a type="button" class="btn btn-primary btn-sm" href="{{route('recent.job.details',$list->j_id)}}">View Details</a>|
-                                @guest
-                                    <a href="{{route('login')}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a>
-                                @endguest
-                                @auth
-                                    @if(Auth::user()->hasRole('professional'))
-                                        <a href="{{route('applyOnline',$list->j_id)}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a>
-                                    @endif
-                                @endauth
+
+                                <a type="button" class="btn btn-primary btn-sm" href="{{route('recent.job.details',$list->j_id)}}">View Details</a>
+                                    {{-- <a href="{{route('login')}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a> --}}
+                              
+                                  {{-- @if(Auth::user()->hasRole('professional') )
+                                        <a href="{{ route('applyOnline', $list->j_id) }}"
+                                        class="btn btn-primary" style="background-color: #E05024; border: none;">
+                                            Apply Now
+                                        </a>
+                                    @else
+                                        <span class="badge badge-success">Already Applied</span>
+                                    @endif --}}
+                              
+
                             </td>
                         </tr>
                     @endforeach

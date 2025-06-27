@@ -10,7 +10,22 @@
             <div class="card bg-primary text-white">
                 <div class="card-body">
                     <div class="row">
+
                         <div class="col-md-12">
+                            @guest
+                            <!-- <a href="{{route('login')}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a> -->
+                            <p class="text-center"><a class="btn btn-success" href="{{route('login')}}">Apply Online</a>
+                            </p>
+                            @endguest
+                            @auth
+                            {{-- @dd($jobs_details) --}}
+                            @if(Auth::user()->hasRole('professional')&& $IsApplied != true)
+                            <p class="text-center"><a class="btn btn-success"
+                                    href="{{route('applyOnline',$jobs_details->job_id)}}">Apply Online</a></p>
+                            @elseif (Auth::user()->hasRole('professional')&& $IsApplied == true)
+                            <p class="text-center"><a class="btn btn-danger">Already Applied</a></p>
+                            @endif
+                            @endauth
                             <h3 class="mb-0"><b>{{$jobs_details->option_name ?? 'N/A'}}</b></h3>
                             {{-- <p><strong><em>{{$jobs_details->company_name}}</em></strong></p> --}}
                             <div class="row">
@@ -176,17 +191,7 @@
             </div>
         </div>
     </div>
-    @guest
-    <!-- <a href="{{route('login')}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a> -->
-    <p class="text-center"><a class="btn btn-success" href="{{route('login')}}">Apply Online</a></p>
-    @endguest
-    @auth
-    @if(Auth::user()->hasRole('professional'))
-    <!-- <a href="{{route('applyOnline',$jobs_details->job_id)}}" style="background-color: #E05024 !important; border: none !important;" type="button" class="btn btn-primary">Apply Now</a> -->
-    <p class="text-center"><a class="btn btn-success" href="{{route('applyOnline',$jobs_details->job_id)}}">Apply
-            Online</a></p>
-    @endif
-    @endauth
+
 
 </div>
 
